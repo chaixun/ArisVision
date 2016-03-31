@@ -8,10 +8,10 @@
 
 using namespace xn;
 
-namespace Aris
+namespace aris
 {
 
-namespace Sensor
+namespace sensor
 {
 
 static int frameNum = 0;
@@ -215,53 +215,53 @@ KINECT::~KINECT()
     ;
 }
 
-void KINECT::UpdateData(VISION_DATA &data)
+void KINECT::updateData(VISION_DATA &data)
 {
-    KINECT_BASE::UpdateData(data);
+    KINECT_BASE::updateData(data);
 
-//    vector<Point3D> pPointSet;
+    //    vector<Point3D> pPointSet;
 
-//    ofstream ofs4;
-//    stringstream out4;
-//    out4<<frameNum;
-//    string dataname4 ="../PointCloud/PlaneData_" + out4.str() + ".txt";
-//    ofs4.open(dataname4, ios::trunc);
+    //    ofstream ofs4;
+    //    stringstream out4;
+    //    out4<<frameNum;
+    //    string dataname4 ="../PointCloud/PlaneData_" + out4.str() + ".txt";
+    //    ofs4.open(dataname4, ios::trunc);
 
-//    for(int m = 0; m < 120; m++)
-//    {
-//        for(int n = 0; n < 120; n++)
-//        {
-//            pPointSet.clear();
+    //    for(int m = 0; m < 120; m++)
+    //    {
+    //        for(int n = 0; n < 120; n++)
+    //        {
+    //            pPointSet.clear();
 
-//            for(int p = 0; p < 480; p++)
-//            {
-//                for(int q = 0; q < 640; q++)
-//                {
-//                    if(data.pointCloud[p][q][0] != 0 && data.pointCloud[p][q][1] != 0&&data.pointCloud[p][q][2] != 0
-//                            &&floor(data.pointCloud[p][q][0]/0.025) + 60 == n&&floor(data.pointCloud[p][q][2]/0.025) == m)
-//                    {
-//                        Point3D tempPoint;
-//                        tempPoint.X = data.pointCloud[p][q][0];
-//                        tempPoint.Y = data.pointCloud[p][q][1];
-//                        tempPoint.Z = data.pointCloud[p][q][2];
+    //            for(int p = 0; p < 480; p++)
+    //            {
+    //                for(int q = 0; q < 640; q++)
+    //                {
+    //                    if(data.pointCloud[p][q][0] != 0 && data.pointCloud[p][q][1] != 0&&data.pointCloud[p][q][2] != 0
+    //                            &&floor(data.pointCloud[p][q][0]/0.025) + 60 == n&&floor(data.pointCloud[p][q][2]/0.025) == m)
+    //                    {
+    //                        Point3D tempPoint;
+    //                        tempPoint.X = data.pointCloud[p][q][0];
+    //                        tempPoint.Y = data.pointCloud[p][q][1];
+    //                        tempPoint.Z = data.pointCloud[p][q][2];
 
-//                        pPointSet.push_back(tempPoint);
-//                    }
-//                }
-//            }
-//            if(pPointSet.size() != 0)
-//            {
-//                CalPlane(pPointSet, data.pGridMap[m][n]);
-//            }
-//            ofs4<<data.pGridMap[m][n].planePara[0]<<" "<<data.pGridMap[m][n].planePara[1]<<" "<<data.pGridMap[m][n].planePara[2]<<" "<<data.pGridMap[m][n].planePara[3]<<" "
-//                                                 <<data.pGridMap[m][n].pointNum<<" "<<data.pGridMap[m][n].planeDegree<<" "<<data.pGridMap[m][n].normalVector<<endl;
-//        }
-//    }
+    //                        pPointSet.push_back(tempPoint);
+    //                    }
+    //                }
+    //            }
+    //            if(pPointSet.size() != 0)
+    //            {
+    //                CalPlane(pPointSet, data.pGridMap[m][n]);
+    //            }
+    //            ofs4<<data.pGridMap[m][n].planePara[0]<<" "<<data.pGridMap[m][n].planePara[1]<<" "<<data.pGridMap[m][n].planePara[2]<<" "<<data.pGridMap[m][n].planePara[3]<<" "
+    //                                                 <<data.pGridMap[m][n].pointNum<<" "<<data.pGridMap[m][n].planeDegree<<" "<<data.pGridMap[m][n].normalVector<<endl;
+    //        }
+    //    }
 
     frameNum++;
 }
 
-void KINECT_BASE::Initiate()
+void KINECT_BASE::init()
 {
     mKinectStruct->mStatus = mKinectStruct->mContext.Init();
     mKinectStruct->CheckOpenNIError(mKinectStruct->mStatus, "initialize context");
@@ -277,7 +277,7 @@ void KINECT_BASE::Initiate()
     mKinectStruct->CheckOpenNIError(mKinectStruct->mStatus, "Start View Cloud");
 }
 
-void KINECT_BASE::Release()
+void KINECT_BASE::release()
 {
     mKinectStruct->mContext.StopGeneratingAll();
     mKinectStruct->mContext.Release();
@@ -293,7 +293,7 @@ KINECT_BASE::~KINECT_BASE()
     cout<<"Device Close!"<<endl;
 }
 
-void KINECT_BASE::UpdateData(VISION_DATA &data)
+void KINECT_BASE::updateData(VISION_DATA &data)
 {
     mKinectStruct->mStatus = mKinectStruct->mContext.WaitAndUpdateAll();
     //mKinectStruct->CheckOpenNIError(mKinectStruct->mStatus, "View Cloud");
@@ -319,40 +319,45 @@ void KINECT_BASE::UpdateData(VISION_DATA &data)
             0, 0, 0, 1;
 
     Matrix4f robotToWorld;
+    //    robotToWorld << 1, 0, 0, 0,
+    //            0, 1, 0, 0.85,
+    //            0, 0, 1, 0,
+    //            0, 0, 0, 1;
+
     robotToWorld << 1, 0, 0, 0,
-            0, 1, 0, 0.85,
+            0, 1, 0, 0,
             0, 0, 1, 0,
             0, 0, 0, 1;
 
     Matrix4f kinectToWorld = robotToWorld*kinectToRobot*kinectAdjust;
 
-//    write point cloud data
+    //    write point cloud data
 
-//    ofstream ofs1;
-//    stringstream out1;
-//    out1<<frameNum;
-//    string dataname1 ="../PointCloud/originalcloud" + out1.str() + ".txt";
-//    ofs1.open(dataname1,ios::trunc);
+    //    ofstream ofs1;
+    //    stringstream out1;
+    //    out1<<frameNum;
+    //    string dataname1 ="../PointCloud/originalcloud" + out1.str() + ".txt";
+    //    ofs1.open(dataname1,ios::trunc);
 
-//    ofstream ofs2;
-//    stringstream out2;
-//    out2<<frameNum;
-//    string dataname2 ="../PointCloud/transformedcloud_" + out2.str() + ".txt";
-//    ofs2.open(dataname2,ios::trunc);
+    //    ofstream ofs2;
+    //    stringstream out2;
+    //    out2<<frameNum;
+    //    string dataname2 ="../PointCloud/transformedcloud_" + out2.str() + ".txt";
+    //    ofs2.open(dataname2,ios::trunc);
 
-//    ofstream ofs3;
-//    stringstream out3;
-//    out3<<frameNum;
-//    string dataname3 ="../PointCloud/grid_" + out3.str() + ".txt";
-//    ofs3.open(dataname3,ios::trunc);
+    //    ofstream ofs3;
+    //    stringstream out3;
+    //    out3<<frameNum;
+    //    string dataname3 ="../PointCloud/grid_" + out3.str() + ".txt";
+    //    ofs3.open(dataname3,ios::trunc);
 
-//    for (int i = 0; i < 480; i++)
-//    {
-//        for(int j = 0; j < 640; j++)
-//        {
-//            ofs1<<data.pointCloud[i][j][0]/1000<<" "<<data.pointCloud[i][j][1]/1000<<" "<<data.pointCloud[i][j][2]/1000<<" "<<endl;
-//        }
-//    }
+    //    for (int i = 0; i < 480; i++)
+    //    {
+    //        for(int j = 0; j < 640; j++)
+    //        {
+    //            ofs1<<data.pointCloud[i][j][0]/1000<<" "<<data.pointCloud[i][j][1]/1000<<" "<<data.pointCloud[i][j][2]/1000<<" "<<endl;
+    //        }
+    //    }
 
     for (int i = 0; i < 480; i++)
     {
@@ -374,23 +379,24 @@ void KINECT_BASE::UpdateData(VISION_DATA &data)
                 data.pointCloud[i][j][0] = tempPoint.X/1000;
                 data.pointCloud[i][j][1] = tempPoint.Y/1000;
                 data.pointCloud[i][j][2] = tempPoint.Z/1000;
+
             }
-//            ofs2<<data.pointCloud[i][j][0]<<" "<<data.pointCloud[i][j][1]<<" "<<data.pointCloud[i][j][2]<<" "<<endl;
+            //            ofs2<<data.pointCloud[i][j][0]<<" "<<data.pointCloud[i][j][1]<<" "<<data.pointCloud[i][j][2]<<" "<<endl;
         }
     }
 
     GenerateGridMap(data);
-//    for(int i = 0; i < 60; i++)
-//    {
-//        for(int j = 0; j < 60; j++)
-//        {
-//            ofs3<<data.pGridMap[i][j].X<<" "<<data.pGridMap[i][j].Y<<" "<<data.pGridMap[i][j].Z<<endl;
-//        }
-//    }
-    cout<<"FrameNum: "<<frameNum<<endl;
-//    ofs1.close();
-//    ofs2.close();
-//    ofs3.close();
+    //    for(int i = 0; i < 60; i++)
+    //    {
+    //        for(int j = 0; j < 60; j++)
+    //        {
+    //            ofs3<<data.pGridMap[i][j].X<<" "<<data.pGridMap[i][j].Y<<" "<<data.pGridMap[i][j].Z<<endl;
+    //        }
+    //    }
+    //    cout<<"FrameNum: "<<frameNum<<endl;
+    //    ofs1.close();
+    //    ofs2.close();
+    //    ofs3.close();
 }
 }
 }

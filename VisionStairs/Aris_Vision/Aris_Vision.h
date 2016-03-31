@@ -3,7 +3,7 @@
 
 #define linux 1
 
-#include "Aris_Sensor.h"
+#include "aris_sensor.h"
 #include <memory>
 #include <stdlib.h>
 #include <iostream>
@@ -13,10 +13,10 @@
 using namespace std;
 using namespace Eigen;
 
-namespace Aris
+namespace aris
 {
 
-namespace Sensor
+namespace sensor
 {
 
 struct GridMap
@@ -36,18 +36,20 @@ struct VISION_DATA
     float pointCloud[480][640][3];
     GridMap pGridMap[120][120];
     float gridMap[120][120];
+    int test = 4;
 };
 
-class KINECT_BASE: public SENSOR_BASE<VISION_DATA>
+
+class KINECT_BASE: public SensorBase<VISION_DATA>
 {
 public:
     KINECT_BASE();
     virtual ~KINECT_BASE();
 
 protected:
-    virtual void Initiate();
-    virtual void UpdateData(VISION_DATA &data);
-    virtual void Release();
+    virtual auto init()->void;
+    virtual auto release()->void;
+    virtual auto updateData(VISION_DATA &data)->void;
 
 private:
     class KINECT_BASE_STRUCT;
@@ -60,7 +62,7 @@ public:
     KINECT();
     ~KINECT();
 private:
-    virtual void UpdateData(VISION_DATA &data);
+    virtual void updateData(VISION_DATA &data);
 };
 
 }
