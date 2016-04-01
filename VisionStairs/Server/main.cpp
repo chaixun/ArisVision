@@ -176,14 +176,15 @@ static auto visionThread = std::thread([]()
                     visionWalkParam.totalCount = 2500;
                     memcpy(visionWalkParam.bodymovedata, movebody, sizeof(movebody));
                     terrain0 = terrainNotKnown;
+                    memset(lastfootpos, 0, sizeof(double)*6);
                 }
                 else
                 {
                     visionWalkParam.movetype = stepdown;
                     visionWalkParam.totalCount = 18000;
                     memcpy(visionWalkParam.stepdowndata,nextfootpos,sizeof(nextfootpos));
+                    memcpy(lastfootpos, nextfootpos, 6*sizeof(double));
                 }
-                memcpy(lastfootpos, nextfootpos, 6*sizeof(double));
             }
                 break;
             case terrainStepOver:

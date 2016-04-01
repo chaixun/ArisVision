@@ -319,15 +319,15 @@ void KINECT_BASE::updateData(VISION_DATA &data)
             0, 0, 0, 1;
 
     Matrix4f robotToWorld;
-    //    robotToWorld << 1, 0, 0, 0,
-    //            0, 1, 0, 0.85,
-    //            0, 0, 1, 0,
-    //            0, 0, 0, 1;
+        robotToWorld << 1, 0, 0, 0,
+                0, 1, 0, 0.85,
+                0, 0, 1, 0,
+                0, 0, 0, 1;
 
-    robotToWorld << 1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            0, 0, 0, 1;
+//    robotToWorld << 1, 0, 0, 0,
+//            0, 1, 0, 0,
+//            0, 0, 1, 0,
+//            0, 0, 0, 1;
 
     Matrix4f kinectToWorld = robotToWorld*kinectToRobot*kinectAdjust;
 

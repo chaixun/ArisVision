@@ -29,10 +29,4 @@ struct VISION_WALK_PARAM
 
 int RobotVisionWalk(Robots::RobotBase &robot, const VISION_WALK_PARAM &param);
 
-void RobotBody(Robots::RobotBase &robot, const VISION_WALK_PARAM &pParam);
-
-void RobotStepUp(Robots::RobotBase &robot, const VISION_WALK_PARAM &pParam);
-
-void RobotStepDown(Robots::RobotBase &robot, const VISION_WALK_PARAM &pParam);
-
 #endif // VISION_GAIT0_H

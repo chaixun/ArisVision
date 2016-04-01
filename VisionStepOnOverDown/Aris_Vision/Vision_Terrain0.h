@@ -3,6 +3,7 @@
 
 enum TerrainType
 {
+    UnknownTerrain = 19,
     StepUpTerrain = 20,
     StepDownTerrain = 21,
     DitchTerrain = 22,

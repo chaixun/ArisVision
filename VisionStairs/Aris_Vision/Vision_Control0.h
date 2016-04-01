@@ -3,9 +3,9 @@
 
 #include "Vision_Terrain0.h"
 
-int visionAdjust(double *, bool *);
-int visionStepUp(double *);
-int visionStepDown(double *);
-int visionStepOver(double *);
+void visionAdjust(double *, bool *);
+void visionStepUp(double *);
+void visionStepDown(double *);
+void visionStepOver(double *);
 
 #endif // VISIONCONTROL0_H

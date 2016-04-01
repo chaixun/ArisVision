@@ -23,6 +23,7 @@ log*.txt
 
 <<<<<<< HEAD
 =======
+build
 CMaKeFiles
 CMakeFiles
 bin

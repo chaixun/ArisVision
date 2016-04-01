@@ -18,9 +18,9 @@ using namespace std;
 #include "rtdk.h"
 #include "unistd.h"
 
-using namespace Aris::Core;
+using namespace aris::core;
 
-Aris::Sensor::KINECT kinect1;
+aris::sensor::KINECT kinect1;
 
 TerrainAnalysis terrainAnalysisResult;
 
@@ -40,7 +40,7 @@ TerrainType0 terrain0 = terrainNotKnown;
 
 VISION_WALK_PARAM visionWalkParam;
 
-Aris::Control::Pipe<int> visionPipe(true);
+aris::control::Pipe<int> visionPipe(true);
 
 static auto visionThread = std::thread([]()
 {
@@ -49,8 +49,8 @@ static auto visionThread = std::thread([]()
         int a;
         visionPipe.recvInNrt(a);
 
-        auto visiondata = kinect1.GetSensorData();
-        terrainAnalysisResult.TerrainAnalyze(visiondata.Get().gridMap);
+        auto visiondata = kinect1.getSensorData();
+        terrainAnalysisResult.TerrainAnalyze(visiondata.get().gridMap);
 
         if(terrain0 == terrainNotKnown)
         {
@@ -68,13 +68,15 @@ static auto visionThread = std::thread([]()
                     {
                         visionWalkParam.movetype = turn;
                         visionWalkParam.turndata = paramAdjust[3];
-                        visionWalkParam.totalCount = 6001;
+                        visionWalkParam.totalCount = 6000/2;
+                        cout<<"terrain turn"<<endl;
                     }
                     else
                     {
                         visionWalkParam.movetype = flatmove;
                         memcpy(visionWalkParam.movedata,paramAdjust,3*sizeof(double));
-                        visionWalkParam.totalCount = 5000;
+                        visionWalkParam.totalCount = 5000/2;
+                        cout<<"terrain move"<<endl;
                     }
                 }
                 else
@@ -107,7 +109,7 @@ static auto visionThread = std::thread([]()
                         double stepoverdata[4] = {0, 0, 0, 0};
                         visionStepOver(stepoverdata);
                         visionWalkParam.movetype = flatmove;
-                        visionWalkParam.totalCount = 5000;
+                        visionWalkParam.totalCount = 5000/2;
                         memcpy(visionWalkParam.movedata,stepoverdata + 1, 3*sizeof(double));
                     }
                         break;
@@ -123,7 +125,7 @@ static auto visionThread = std::thread([]()
                 double move_data[3] = {0, 0, 0.325};
 
                 visionWalkParam.movetype = flatmove;
-                visionWalkParam.totalCount = 5000;
+                visionWalkParam.totalCount = 5000/2;
                 memcpy(visionWalkParam.movedata,move_data,sizeof(move_data));
             }
         }
@@ -166,7 +168,6 @@ static auto visionThread = std::thread([]()
                     {
                         stepDownFinished = false;
                     }
-
                 }
                 if(stepDownFinished == true)
                 {
@@ -175,14 +176,15 @@ static auto visionThread = std::thread([]()
                     visionWalkParam.totalCount = 2500;
                     memcpy(visionWalkParam.bodymovedata, movebody, sizeof(movebody));
                     terrain0 = terrainNotKnown;
+                    memset(lastfootpos, 0, sizeof(double)*6);
                 }
                 else
                 {
                     visionWalkParam.movetype = stepdown;
                     visionWalkParam.totalCount = 18000;
                     memcpy(visionWalkParam.stepdowndata,nextfootpos,sizeof(nextfootpos));
+                    memcpy(lastfootpos, nextfootpos, 6*sizeof(double));
                 }
-                memcpy(lastfootpos, nextfootpos, 6*sizeof(double));
             }
                 break;
             case terrainStepOver:
@@ -190,7 +192,7 @@ static auto visionThread = std::thread([]()
                 double stepoverdata[4] = {0, 0, 0, 0};
                 visionStepOver(stepoverdata);
                 visionWalkParam.movetype = flatmove;
-                visionWalkParam.totalCount = 5000;
+                visionWalkParam.totalCount = 5000/2;
                 memcpy(visionWalkParam.movedata,stepoverdata + 1, 3*sizeof(double));
 
                 if(int(stepoverdata[0]) == 4)
@@ -205,16 +207,17 @@ static auto visionThread = std::thread([]()
         }
 
         isTerrainAnalysisFinished = true;
+        cout<<"terrrainended"<<endl;
     }
-
 });
 
-auto visionWalkParse(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg_out)->void
+auto visionWalkParse(const std::string &cmd, const std::map<std::string, std::string> &params, aris::core::Msg &msg_out)->void
 {
-
+    aris::server::GaitParamBase param;
+    msg_out.copyStruct(param);
 }
 
-auto visionWalk(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase & plan_param)->int
+auto visionWalk(aris::dynamic::Model &model, const aris::dynamic::PlanParamBase & plan_param)->int
 {
     static bool isFirstTime = true;
 
@@ -232,9 +235,10 @@ auto visionWalk(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase 
         {
         case turn:
         {
-            RobotVisionWalk(robot, visionWalkParam);
-            int remainCount = visionWalkParam.totalCount - visionWalkParam.count - 1;
+
+            int remainCount = RobotVisionWalk(robot, visionWalkParam);
             visionWalkParam.count++;
+
             if(remainCount == 0 && isStop == true)
             {
                 isStop = false;
@@ -252,9 +256,9 @@ auto visionWalk(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase 
             break;
         case flatmove:
         {
-            RobotVisionWalk(robot, visionWalkParam);
-            int remainCount = visionWalkParam.totalCount - visionWalkParam.count - 1;
+            int remainCount = RobotVisionWalk(robot, visionWalkParam);
             visionWalkParam.count++;
+
             if(remainCount == 0 && isStop == true)
             {
                 isStop = false;
@@ -347,39 +351,39 @@ auto visionWalk(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase 
     }
 }
 
-auto stopVisionWalkParse(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg_out)->void
+auto stopVisionWalkParse(const std::string &cmd, const std::map<std::string, std::string> &params, aris::core::Msg &msg_out)->void
 {
     isStop = true;
 }
 
 int main(int argc, char *argv[])
-{
-    kinect1.Start();
+{   
+    kinect1.start();
+
     std::string xml_address;
 
     if (argc <= 1)
     {
         std::cout << "you did not type in robot name, in this case ROBOT-III will start" << std::endl;
         //xml_address = "/usr/Robots/resource/Robot_Type_I/Robot_III/Robot_III.xml";
-
-        xml_address = "/home/hex/ArisVision/VisionStepOnOverDown/Client/Robot_III.xml";
+        xml_address = "/home/hex/ArisVision/VisionStairs/Robot_III.xml";
     }
     else if (std::string(argv[1]) == "III")
     {
         //xml_address = "/usr/Robots/resource/Robot_Type_I/Robot_III/Robot_III.xml";
-        xml_address = "/home/hex/ArisVision/VisionStepOnOverDown/Client/Robot_III.xml";
+        xml_address = "/home/hex/ArisVision/VisionStairs/Robot_III.xml";
     }
     else if (std::string(argv[1]) == "VIII")
     {
         //xml_address = "/usr/Robots/resource/Robot_Type_I/Robot_VIII/Robot_VIII.xml";
-        xml_address = "/home/hex/ArisVision/VisionStepOnOverDown/Client/Robot_VIII.xml";
+        xml_address = "/home/hex/ArisVision/VisionStairs/Robot_VIII.xml";
     }
     else
     {
         throw std::runtime_error("invalid robot name, please type in III or VIII");
     }
 
-    auto &rs = Aris::Server::ControlServer::instance();
+    auto &rs = aris::server::ControlServer::instance();
 
     rs.createModel<Robots::RobotTypeI>();
     rs.loadXml(xml_address.c_str());
@@ -390,23 +394,23 @@ int main(int argc, char *argv[])
     rs.addCmd("wk", Robots::walkParse, Robots::walkGait);
     rs.addCmd("ro", Robots::resetOriginParse, Robots::resetOriginGait);
     rs.addCmd("vwk", visionWalkParse, visionWalk);
-    rs.addCmd("svw", stopVisionWalkParse, visionWalk);
+    rs.addCmd("swk", stopVisionWalkParse, visionWalk);
 
     rs.open();
 
     rs.setOnExit([&]()
     {
-        Aris::Core::XmlDocument xml_doc;
+        aris::core::XmlDocument xml_doc;
         xml_doc.LoadFile(xml_address.c_str());
         auto model_xml_ele = xml_doc.RootElement()->FirstChildElement("Model");
         if (!model_xml_ele)
             throw std::runtime_error("can't find Model element in xml file");
         rs.model().saveXml(*model_xml_ele);
 
-        Aris::Core::stopMsgLoop();
+        aris::core::stopMsgLoop();
     });
 
-    Aris::Core::runMsgLoop();
+    aris::core::runMsgLoop();
 
     return 0;
 

@@ -1,9 +1,10 @@
+Aris_Vision
 .
 /usr/include/ni
-/usr/include/nite
 /usr/
 
-/usr/Aris/include
+/usr/aris/include
 /usr/xenomai/include
 /opt/etherlab/include
 /usr/Robots/include
+

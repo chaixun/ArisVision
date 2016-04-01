@@ -245,7 +245,6 @@ void RobotStepUp(Robots::RobotBase &robot, const VISION_WALK_PARAM &pParam)
         memcpy(StepUpCurrentPos, StepUpNextPos, 6*sizeof(double));
     }
 
-    //pRobot->SetPee(pEE, pBodyPE);
     robot.SetPeb(pBodyPE, beginMak);
     robot.SetPee(pEE, beginMak);
 }
@@ -407,7 +406,6 @@ void RobotStepDown(Robots::RobotBase &robot, const VISION_WALK_PARAM &pParam)
         memcpy(StepDownCurrentPos, StepDownNextPos, 6*sizeof(double));
     }
 
-    //pRobot->SetPee(pEE, pBodyPE);
     robot.SetPeb(pBodyPE, beginMak);
     robot.SetPee(pEE, beginMak);
 }

@@ -3,7 +3,7 @@
 
 #include <Robot_Gait.h>
 
-using namespace Aris::Dynamic;
+using namespace aris::dynamic;
 
 enum robotMove
 {
@@ -15,21 +15,9 @@ enum robotMove
     stepdown = 5,
 };
 
-//struct VISION_WALK_PARAM :public Robots::GAIT_PARAM_BASE
-//{
-//    robotMove movetype = nomove;
-//    int counter = 5000;
-//    double turndata = 0;
-//    double movedata[3] = {0, 0, 0};
-//    double bodymovedata[3] = {0, 0, 0};
-//    double stepupdata[6] = {0, 0, 0, 0, 0, 0};
-//    double stepdowndata[6] = {0, 0, 0, 0, 0, 0};
-//};
-
 struct VISION_WALK_PARAM
 {
     int count = 0;
-    int n = 1;
     robotMove movetype = nomove;
     int totalCount = 5000;
     double turndata = 0;
@@ -39,11 +27,7 @@ struct VISION_WALK_PARAM
     double stepdowndata[6] = {0, 0, 0, 0, 0, 0};
 };
 
-void RobotVisionWalk(Robots::RobotBase &robot, const VISION_WALK_PARAM &param);
-
-void RobotTurn(Robots::RobotBase &robot, const VISION_WALK_PARAM &pParam);
-
-void RobotMove(Robots::RobotBase &robot, const VISION_WALK_PARAM &pParam);
+int RobotVisionWalk(Robots::RobotBase &robot, const VISION_WALK_PARAM &param);
 
 void RobotBody(Robots::RobotBase &robot, const VISION_WALK_PARAM &pParam);
 

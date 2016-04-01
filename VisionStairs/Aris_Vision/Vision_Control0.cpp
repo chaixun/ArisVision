@@ -5,7 +5,7 @@
 
 using namespace std;
 
-int visionAdjust(double *param_Adjust, bool *adjust_Finished)
+void visionAdjust(double *param_Adjust, bool *adjust_Finished)
 {
     if(abs(TerrainAnalysis::leftedge_z[0] - TerrainAnalysis::rightedge_z[0]) > 2)
     {
@@ -89,11 +89,9 @@ int visionAdjust(double *param_Adjust, bool *adjust_Finished)
             }
         }
     }
-
-    return 0;
 }
 
-int visionStepUp(double *nextfoot_pos)
+void visionStepUp(double *nextfoot_pos)
 {
     cout<<"Step Up!!!"<<endl;
 
@@ -139,10 +137,21 @@ int visionStepUp(double *nextfoot_pos)
 
     memcpy(nextfoot_pos, StepUp_Foot_Height[StepUp_Num%5], sizeof(StepUp_Foot_Height[StepUp_Num%5]));
 
-    return 0;
+    //Reset StepDown
+    if(StepUp_Num == 4)
+    {
+        StepUp_Num = -1;
+        for(int i = 0; i < 5; i++)
+        {
+            for(int j = 0; j < 6; j++)
+            {
+                StepUp_Foot_Height[i][j] = -1.05;
+            }
+        }
+    }
 }
 
-int visionStepDown(double *next_foot_pos)
+void visionStepDown(double *next_foot_pos)
 {
     cout<<"Step Down!!!"<<endl;
 
@@ -187,18 +196,27 @@ int visionStepDown(double *next_foot_pos)
             <<endl<<StepDown_Foot_Height[StepDown_Num%5][3]<<endl<<StepDown_Foot_Height[StepDown_Num%5][4]<<endl<<StepDown_Foot_Height[StepDown_Num%5][5]<<endl;
 
     memcpy(next_foot_pos, StepDown_Foot_Height[StepDown_Num%5], sizeof(StepDown_Foot_Height[StepDown_Num%5]));
-    return 0;
+
+    //Reset StepDown
+    if(StepDown_Num == 4)
+    {
+        StepDown_Num = -1;
+        for(int i = 0; i < 5; i++)
+        {
+            for(int j = 0; j < 6; j++)
+            {
+                StepDown_Foot_Height[i][j] = -0.85;
+            }
+        }
+    }
+
 }
 
-int visionStepOver(double *step_over_data)
+void visionStepOver(double *step_over_data)
 {
     cout<<"Step Over!!!"<<endl;
 
-    static int StepOver_Num = -1;
-
     static double counter = 0.0;
-
-    StepOver_Num++;
 
     double stepover_data[4] = {0, 0, 0, 0};
     stepover_data[0] = counter;
@@ -219,5 +237,8 @@ int visionStepOver(double *step_over_data)
 
     memcpy(step_over_data,stepover_data,4*sizeof(double));
 
-    return 0;
+    if(stepover_data[0] == 4)
+    {
+        counter = 0;
+    }
 }
