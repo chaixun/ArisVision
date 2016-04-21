@@ -13,7 +13,6 @@ enum robotMove
     bodymove = 3,
     stepup = 4,
     stepdown = 5,
-    stopmove = 6,
 };
 
 struct VISION_WALK_PARAM
@@ -24,8 +23,8 @@ struct VISION_WALK_PARAM
     double turndata = 0;
     double movedata[3] = {0, 0, 0};
     double bodymovedata[3] = {0, 0, 0};
-    double stepupdata[7] = {0, 0, 0, 0, 0, 0, 0};
-    double stepdowndata[7] = {0, 0, 0, 0, 0, 0, 0};
+    double stepupdata[6] = {0, 0, 0, 0, 0, 0};
+    double stepdowndata[6] = {0, 0, 0, 0, 0, 0};
 };
 
 int RobotVisionWalk(Robots::RobotBase &robot, const VISION_WALK_PARAM &param);

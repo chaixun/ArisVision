@@ -8,9 +8,7 @@ int TerrainAnalysis::rightedge_z[6] = {0, 0, 0, 0, 0, 0};
 int TerrainAnalysis::leftedge_x[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 int TerrainAnalysis::rightedge_x[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 int TerrainAnalysis::Terrain = FlatTerrain;
-
 int frame_num = 0;
-
 void TerrainAnalysis::TerrainAnalyze(const float oriGridMap[120][120])
 {
     float GridMap[120][120];

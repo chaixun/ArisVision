@@ -27,13 +27,13 @@ void visionAdjust(double *param_Adjust, bool *adjust_Finished)
     else
     {
         /*Move Closer*/
-        if((TerrainAnalysis::leftedge_z[0] < 32) || (TerrainAnalysis::leftedge_z[0] > 34))
+        if((TerrainAnalysis::leftedge_z[0] < 30) || (TerrainAnalysis::leftedge_z[0] > 32))
         {
             cout<<"MOVE FORWARD AND BACKWARD!"<<endl;
             double movez_data[3] = {0, 0, 0};
-            movez_data[2] = (TerrainAnalysis::leftedge_z[0] - 33)*0.025;
+            movez_data[2] = (TerrainAnalysis::leftedge_z[0] - 31)*0.025;
             /*max walk*/
-            if(TerrainAnalysis::leftedge_z[0] < 32)
+            if(TerrainAnalysis::leftedge_z[0] < 30)
             {
                 movez_data[2] = movez_data[2] < -0.325? -0.325 : movez_data[2];
             }
@@ -50,43 +50,44 @@ void visionAdjust(double *param_Adjust, bool *adjust_Finished)
         }
         else
         {
-            /*Avoid Moving Middle*/
-            if((TerrainAnalysis::rightedge_x[0] !=0&&TerrainAnalysis::rightedge_x[0] > 35)
-                    ||(TerrainAnalysis::leftedge_x[0] !=0&&TerrainAnalysis::leftedge_x[0] < 85))
-            {
-                /*Move Middle*/
-                cout<<"MOVE LFET AND RIGHT!"<<endl;
-                if(TerrainAnalysis::rightedge_x[0] < 35)
-                {
-                    double movexr_data[3] = {0, 0, 0};
-                    movexr_data[0] = (TerrainAnalysis::leftedge_x[0] - 85)*0.025;
-                    /*max walk*/
-                    movexr_data[0] = movexr_data[0] < -0.1 ? -0.1 : movexr_data[0];
-                    cout<<"LEFT_X: "<<TerrainAnalysis::leftedge_x[0]<<endl;
-                    cout<<"RIGHT_X: "<<TerrainAnalysis::rightedge_x[0]<<endl;
-                    cout<<"MOVE RIGHT: "<<movexr_data[0]<<endl;
+//            /*Avoid Moving Middle*/
+//            if((TerrainAnalysis::rightedge_x[0] !=0&&TerrainAnalysis::rightedge_x[0] > 35)
+//                    ||(TerrainAnalysis::leftedge_x[0] !=0&&TerrainAnalysis::leftedge_x[0] < 85))
+//            {
+//                /*Move Middle*/
+//                cout<<"MOVE LFET AND RIGHT!"<<endl;
+//                if(TerrainAnalysis::rightedge_x[0] < 35)
+//                {
+//                    double movexr_data[3] = {0, 0, 0};
+//                    movexr_data[0] = (TerrainAnalysis::leftedge_x[0] - 85)*0.025;
+//                    /*max walk*/
+//                    movexr_data[0] = movexr_data[0] < -0.1 ? -0.1 : movexr_data[0];
+//                    cout<<"LEFT_X: "<<TerrainAnalysis::leftedge_x[0]<<endl;
+//                    cout<<"RIGHT_X: "<<TerrainAnalysis::rightedge_x[0]<<endl;
+//                    cout<<"MOVE RIGHT: "<<movexr_data[0]<<endl;
 
-                    /*let the robot move (right) movexr_data*/
-                    param_Adjust[0] = movexr_data[0];
-                }
-                else
-                {
-                    double movexl_data[3] = {0, 0, 0};
-                    movexl_data[0] = (TerrainAnalysis::rightedge_x[0] - 35)*0.025;
-                    /*max walk*/
-                    movexl_data[0] = movexl_data[0] > 0.1 ? 0.1 : movexl_data[0];
-                    cout<<"LEFT_X: "<<TerrainAnalysis::leftedge_x[0]<<endl;
-                    cout<<"RIGHT_X: "<<TerrainAnalysis::rightedge_x[0]<<endl;
-                    cout<<"MOVE LEFT: "<<movexl_data[0]<<endl;
+//                    /*let the robot move (right) movexr_data*/
+//                    param_Adjust[0] = movexr_data[0];
+//                }
+//                else
+//                {
+//                    double movexl_data[3] = {0, 0, 0};
+//                    movexl_data[0] = (TerrainAnalysis::rightedge_x[0] - 35)*0.025;
+//                    /*max walk*/
+//                    movexl_data[0] = movexl_data[0] > 0.1 ? 0.1 : movexl_data[0];
+//                    cout<<"LEFT_X: "<<TerrainAnalysis::leftedge_x[0]<<endl;
+//                    cout<<"RIGHT_X: "<<TerrainAnalysis::rightedge_x[0]<<endl;
+//                    cout<<"MOVE LEFT: "<<movexl_data[0]<<endl;
 
-                    /*let the robot move (left) movexl_data*/
-                    param_Adjust[0] = movexl_data[0];
-                }
-            }
-            else
-            {
-                *adjust_Finished = true;
-            }
+//                    /*let the robot move (left) movexl_data*/
+//                    param_Adjust[0] = movexl_data[0];
+//                }
+//            }
+//            else
+//            {
+//                *adjust_Finished = true;
+//            }
+            *adjust_Finished = true;
         }
     }
 }
@@ -137,11 +138,7 @@ void visionStepUp(double *nextfoot_pos)
 
     memcpy(nextfoot_pos, StepUp_Foot_Height[StepUp_Num%5], sizeof(StepUp_Foot_Height[StepUp_Num%5]));
 
-    nextfoot_pos[6] = double(StepUp_Num);
-
-    cout<<"Step UP Num "<<StepUp_Num<<endl;
-
-    //Reset StepUp
+    //Reset StepDown
     if(StepUp_Num == 4)
     {
         StepUp_Num = -1;
@@ -152,7 +149,6 @@ void visionStepUp(double *nextfoot_pos)
                 StepUp_Foot_Height[i][j] = -1.05;
             }
         }
-        cout<<"Step Up Finished"<<endl;
     }
 }
 
@@ -202,14 +198,9 @@ void visionStepDown(double *next_foot_pos)
 
     memcpy(next_foot_pos, StepDown_Foot_Height[StepDown_Num%5], sizeof(StepDown_Foot_Height[StepDown_Num%5]));
 
-    next_foot_pos[6] = double(StepDown_Num);
-
-    cout<<"Step Down Num "<<StepDown_Num<<endl;
-
     //Reset StepDown
-    if(StepDown_Num == 5)
+    if(StepDown_Num == 4)
     {
-        cout<<"Step Down Finished "<<endl;
         StepDown_Num = -1;
         for(int i = 0; i < 5; i++)
         {
@@ -219,6 +210,7 @@ void visionStepDown(double *next_foot_pos)
             }
         }
     }
+
 }
 
 void visionStepOver(double *step_over_data)
@@ -231,11 +223,11 @@ void visionStepOver(double *step_over_data)
     stepover_data[0] = counter;
     if(int(stepover_data[0]) % 2 == 0)
     {
-        stepover_data[3] = 0.6;
+        stepover_data[3] = 0.55;
     }
     else
     {
-        stepover_data[3] = 0.05;
+        stepover_data[3] = 0.10;
     }
     cout<<"Count "<<stepover_data[0]<<endl;
     cout<<"X "<<stepover_data[1]<<endl;
@@ -248,7 +240,6 @@ void visionStepOver(double *step_over_data)
 
     if(stepover_data[0] == 4)
     {
-        cout<<"Step Over Finished "<<endl;
         counter = 0;
     }
 }

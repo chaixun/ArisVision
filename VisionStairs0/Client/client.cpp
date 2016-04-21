@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
     if (argc <= 1)throw std::runtime_error("please input the cmd name");
 
 #ifdef UNIX
-    sendRequest(argc - 1, argv + 1, "/home/hex/ArisVision/VisionStepOnOverDown/Robot_III.xml");
+    sendRequest(argc - 1, argv + 1, "/home/hex/ArisVision/VisionStairs0/Robot_III.xml");
 #endif
 #ifdef WIN32
     sendRequest(argc - 1, argv + 1, "C:\\Robots\\resource\\Robot_Type_I\\Robot_III\\Robot_III.xml");

@@ -8,7 +8,7 @@ int TerrainAnalysis::rightedge_z[6] = {0, 0, 0, 0, 0, 0};
 int TerrainAnalysis::leftedge_x[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 int TerrainAnalysis::rightedge_x[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 int TerrainAnalysis::Terrain = FlatTerrain;
-
+int frame_num = 0;
 void TerrainAnalysis::TerrainAnalyze(const float oriGridMap[120][120])
 {
     float GridMap[120][120];
@@ -154,4 +154,23 @@ void TerrainAnalysis::TerrainAnalyze(const float oriGridMap[120][120])
     CurrentHeight[1] = (GridMap[39][48] + GridMap[39][49] + GridMap[40][48] + GridMap[40][49])/4;
     CurrentHeight[2] = (GridMap[39][78] + GridMap[39][79] + GridMap[40][78] + GridMap[40][79])/4;
     CurrentHeight[3] = (GridMap[39][72] + GridMap[39][73] + GridMap[40][72] + GridMap[40][73])/4;
+
+    std::stringstream out;
+    out<<frame_num;
+    std::string filename = "GridMap" + out.str() + ".txt";
+    std::ofstream Gridmapfile(filename);
+    if (Gridmapfile.is_open())
+    {
+        for(int i = 0; i < 120; i++)
+        {
+            for(int j = 0; j < 120; j++)
+            {
+                Gridmapfile<<GridMap[i][j]<<" ";
+            }
+            Gridmapfile<<endl;
+        }
+    }
+    Gridmapfile<<leftedge_z[0]<<" "<<rightedge_z[0];
+
+    frame_num++;
 }

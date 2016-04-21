@@ -1,6 +1,14 @@
 #ifndef VISION_TERRAIN0_H
 #define VISION_TERRAIN0_H
 
+#include <iostream>
+#include <sstream>
+#include <fstream>
+
+using namespace std;
+
+using namespace std;
+
 enum TerrainType
 {
     UnknownTerrain = 19,

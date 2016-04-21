@@ -50,43 +50,45 @@ void visionAdjust(double *param_Adjust, bool *adjust_Finished)
         }
         else
         {
-            /*Avoid Moving Middle*/
-            if((TerrainAnalysis::rightedge_x[0] !=0&&TerrainAnalysis::rightedge_x[0] > 35)
-                    ||(TerrainAnalysis::leftedge_x[0] !=0&&TerrainAnalysis::leftedge_x[0] < 85))
-            {
-                /*Move Middle*/
-                cout<<"MOVE LFET AND RIGHT!"<<endl;
-                if(TerrainAnalysis::rightedge_x[0] < 35)
-                {
-                    double movexr_data[3] = {0, 0, 0};
-                    movexr_data[0] = (TerrainAnalysis::leftedge_x[0] - 85)*0.025;
-                    /*max walk*/
-                    movexr_data[0] = movexr_data[0] < -0.1 ? -0.1 : movexr_data[0];
-                    cout<<"LEFT_X: "<<TerrainAnalysis::leftedge_x[0]<<endl;
-                    cout<<"RIGHT_X: "<<TerrainAnalysis::rightedge_x[0]<<endl;
-                    cout<<"MOVE RIGHT: "<<movexr_data[0]<<endl;
+//            /*Avoid Moving Middle*/
+//            if((TerrainAnalysis::rightedge_x[0] !=0&&TerrainAnalysis::rightedge_x[0] > 35)
+//                    ||(TerrainAnalysis::leftedge_x[0] !=0&&TerrainAnalysis::leftedge_x[0] < 85))
+//            {
+//                /*Move Middle*/
+//                cout<<"MOVE LFET AND RIGHT!"<<endl;
+//                if(TerrainAnalysis::rightedge_x[0] < 35)
+//                {
+//                    double movexr_data[3] = {0, 0, 0};
+//                    movexr_data[0] = (TerrainAnalysis::leftedge_x[0] - 85)*0.025;
+//                    /*max walk*/
+//                    movexr_data[0] = movexr_data[0] < -0.1 ? -0.1 : movexr_data[0];
+//                    cout<<"LEFT_X: "<<TerrainAnalysis::leftedge_x[0]<<endl;
+//                    cout<<"RIGHT_X: "<<TerrainAnalysis::rightedge_x[0]<<endl;
+//                    cout<<"MOVE RIGHT: "<<movexr_data[0]<<endl;
 
-                    /*let the robot move (right) movexr_data*/
-                    param_Adjust[0] = movexr_data[0];
-                }
-                else
-                {
-                    double movexl_data[3] = {0, 0, 0};
-                    movexl_data[0] = (TerrainAnalysis::rightedge_x[0] - 35)*0.025;
-                    /*max walk*/
-                    movexl_data[0] = movexl_data[0] > 0.1 ? 0.1 : movexl_data[0];
-                    cout<<"LEFT_X: "<<TerrainAnalysis::leftedge_x[0]<<endl;
-                    cout<<"RIGHT_X: "<<TerrainAnalysis::rightedge_x[0]<<endl;
-                    cout<<"MOVE LEFT: "<<movexl_data[0]<<endl;
+//                    /*let the robot move (right) movexr_data*/
+//                    param_Adjust[0] = movexr_data[0];
+//                }
+//                else
+//                {
+//                    double movexl_data[3] = {0, 0, 0};
+//                    movexl_data[0] = (TerrainAnalysis::rightedge_x[0] - 35)*0.025;
+//                    /*max walk*/
+//                    movexl_data[0] = movexl_data[0] > 0.1 ? 0.1 : movexl_data[0];
+//                    cout<<"LEFT_X: "<<TerrainAnalysis::leftedge_x[0]<<endl;
+//                    cout<<"RIGHT_X: "<<TerrainAnalysis::rightedge_x[0]<<endl;
+//                    cout<<"MOVE LEFT: "<<movexl_data[0]<<endl;
 
-                    /*let the robot move (left) movexl_data*/
-                    param_Adjust[0] = movexl_data[0];
-                }
-            }
-            else
-            {
-                *adjust_Finished = true;
-            }
+//                    /*let the robot move (left) movexl_data*/
+//                    param_Adjust[0] = movexl_data[0];
+//                }
+//            }
+//            else
+//            {
+//                *adjust_Finished = true;
+//            }
+
+            *adjust_Finished = true;
         }
     }
 }

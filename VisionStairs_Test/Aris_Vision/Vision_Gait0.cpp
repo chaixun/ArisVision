@@ -119,8 +119,6 @@ void RobotStepUp(Robots::RobotBase &robot, const VISION_WALK_PARAM &pParam)
 
     static double StepUpCurrentPos[6] = {-1.05, -1.05, -1.05, -1.05, -1.05, -1.05};
 
-    double StepUpStartPos[6] = {-1.05, -1.05, -1.05, -1.05, -1.05, -1.05};
-
     for(int i = 0; i < 6; i++)
     {
         pEE[i*3 + 1] = StepUpCurrentPos[i];
@@ -244,14 +242,7 @@ void RobotStepUp(Robots::RobotBase &robot, const VISION_WALK_PARAM &pParam)
 
     if (pParam.totalCount - pParam.count - 1 == 0)
     {
-        if(pParam.stepupdata[6] == 4)
-        {
-            memcpy(StepUpCurrentPos, StepUpStartPos, 6*sizeof(double));
-        }
-        else
-        {
-            memcpy(StepUpCurrentPos, StepUpNextPos, 6*sizeof(double));
-        }
+        memcpy(StepUpCurrentPos, StepUpNextPos, 6*sizeof(double));
     }
 
     robot.SetPeb(pBodyPE, beginMak);
@@ -281,8 +272,6 @@ void RobotStepDown(Robots::RobotBase &robot, const VISION_WALK_PARAM &pParam)
       0.3, -0.85, 0.65 };
 
     static double StepDownCurrentPos[6] = {-0.85, -0.85, -0.85, -0.85, -0.85, -0.85};
-
-    double StepDownStartPos[6] = {-0.85, -0.85, -0.85, -0.85, -0.85, -0.85};
 
     for(int i = 0; i < 6; i++)
     {
@@ -414,14 +403,7 @@ void RobotStepDown(Robots::RobotBase &robot, const VISION_WALK_PARAM &pParam)
 
     if (pParam.totalCount - pParam.count - 1 == 0)
     {
-        if(pParam.stepdowndata[6] == 4)
-        {
-            memcpy(StepDownCurrentPos, StepDownStartPos, 6*sizeof(double));
-        }
-        else
-        {
-            memcpy(StepDownCurrentPos, StepDownNextPos, 6*sizeof(double));
-        }
+        memcpy(StepDownCurrentPos, StepDownNextPos, 6*sizeof(double));
     }
 
     robot.SetPeb(pBodyPE, beginMak);

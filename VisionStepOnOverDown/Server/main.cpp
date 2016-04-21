@@ -58,6 +58,7 @@ static auto visionThread = std::thread([]()
             {
                 /*Adjust x y z theta*/
                 double paramAdjust[4] = {0, 0, 0, 0};
+
                 bool adjustFinished = false;
                 visionAdjust(paramAdjust, &adjustFinished);
 
@@ -85,6 +86,7 @@ static auto visionThread = std::thread([]()
                     {
                     case StepUpTerrain:
                     {
+                        cout<<"Move Body Up "<<endl;
                         /*the robot move body*/
                         double movebody[3] = {0, 0.2, 0};
                         visionWalkParam.movetype = bodymove;
@@ -96,7 +98,7 @@ static auto visionThread = std::thread([]()
                     case StepDownTerrain:
                     {
                         terrain0 = terrainStepDown;
-                        double nextfootpos[6] = {0, 0, 0, 0, 0, 0};
+                        double nextfootpos[7] = {0, 0, 0, 0, 0, 0, 0};
                         visionStepDown(nextfootpos);
                         visionWalkParam.movetype = stepdown;
                         visionWalkParam.totalCount = 18000;
@@ -135,20 +137,14 @@ static auto visionThread = std::thread([]()
             {
             case terrainStepUp:
             {
-                bool stepUpFinished = true;
-                double nextfootpos[6] = {0, 0, 0, 0, 0, 0};
+                double nextfootpos[7] = {0, 0, 0, 0, 0, 0, 0};
                 visionStepUp(nextfootpos);
+
                 visionWalkParam.movetype = stepup;
                 visionWalkParam.totalCount = 18000;
                 memcpy(visionWalkParam.stepupdata, nextfootpos,sizeof(nextfootpos));
-                for(int i = 0; i < 6; i++)
-                {
-                    if(nextfootpos[i] != -0.85)
-                    {
-                        stepUpFinished = false;
-                    }
-                }
-                if(stepUpFinished == true)
+
+                if(int(nextfootpos[6]) == 4)
                 {
                     terrain0 = terrainNotKnown;
                 }
@@ -156,34 +152,23 @@ static auto visionThread = std::thread([]()
                 break;
             case terrainStepDown:
             {
-                bool stepDownFinished = true;
-                double nextfootpos[6] = {0, 0, 0, 0, 0, 0};
-                static double lastfootpos[6] = {0, 0, 0, 0, 0, 0};
-
+                double nextfootpos[7] = {0, 0, 0, 0, 0, 0, 0};
                 visionStepDown(nextfootpos);
 
-                for(int i = 0; i < 6; i++)
+                if(int(nextfootpos[6]) == 5)
                 {
-                    if(nextfootpos[i] != -1.05||lastfootpos[i] != -1.05)
-                    {
-                        stepDownFinished = false;
-                    }
-                }
-                if(stepDownFinished == true)
-                {
+                    cout<<"Move Body Down "<<endl;
                     double movebody[3] = {0, -0.2, 0};
                     visionWalkParam.movetype = bodymove;
                     visionWalkParam.totalCount = 2500;
                     memcpy(visionWalkParam.bodymovedata, movebody, sizeof(movebody));
                     terrain0 = terrainNotKnown;
-                    memset(lastfootpos, 0, sizeof(double)*6);
                 }
                 else
                 {
                     visionWalkParam.movetype = stepdown;
                     visionWalkParam.totalCount = 18000;
                     memcpy(visionWalkParam.stepdowndata,nextfootpos,sizeof(nextfootpos));
-                    memcpy(lastfootpos, nextfootpos, 6*sizeof(double));
                 }
             }
                 break;
@@ -205,7 +190,6 @@ static auto visionThread = std::thread([]()
                 break;
             }
         }
-
         isTerrainAnalysisFinished = true;
         cout<<"terrrainended"<<endl;
     }
@@ -243,10 +227,13 @@ auto visionWalk(aris::dynamic::Model &model, const aris::dynamic::PlanParamBase 
             {
                 isStop = false;
                 isFirstTime = true;
+                isSending = false;
+                isTerrainAnalysisFinished = false;
                 return 0;
             }
             if(remainCount == 0 && isStop == false)
             {
+                isStop = false;
                 isFirstTime = true;
                 isSending = false;
                 isTerrainAnalysisFinished = false;
@@ -263,10 +250,13 @@ auto visionWalk(aris::dynamic::Model &model, const aris::dynamic::PlanParamBase 
             {
                 isStop = false;
                 isFirstTime = true;
+                isSending = false;
+                isTerrainAnalysisFinished = false;
                 return 0;
             }
             if(remainCount == 0 && isStop == false)
             {
+                isStop = false;
                 isFirstTime = true;
                 isSending = false;
                 isTerrainAnalysisFinished = false;
@@ -283,10 +273,13 @@ auto visionWalk(aris::dynamic::Model &model, const aris::dynamic::PlanParamBase 
             {
                 isStop = false;
                 isFirstTime = true;
+                isSending = false;
+                isTerrainAnalysisFinished = false;
                 return 0;
             }
             if(remainCount == 0 && isStop == false)
             {
+                isStop = false;
                 isFirstTime = true;
                 isSending = false;
                 isTerrainAnalysisFinished = false;
@@ -303,10 +296,13 @@ auto visionWalk(aris::dynamic::Model &model, const aris::dynamic::PlanParamBase 
             {
                 isStop = false;
                 isFirstTime = true;
+                isSending = false;
+                isTerrainAnalysisFinished = false;
                 return 0;
             }
             if(remainCount == 0 && isStop == false)
             {
+                isStop = false;
                 isFirstTime = true;
                 isSending = false;
                 isTerrainAnalysisFinished = false;
@@ -323,15 +319,27 @@ auto visionWalk(aris::dynamic::Model &model, const aris::dynamic::PlanParamBase 
             {
                 isStop = false;
                 isFirstTime = true;
+                isSending = false;
+                isTerrainAnalysisFinished = false;
                 return 0;
             }
             if(remainCount == 0 && isStop == false)
             {
+                isStop = false;
                 isFirstTime = true;
                 isSending = false;
                 isTerrainAnalysisFinished = false;
                 return -1;
             }
+        }
+            break;
+        case stopmove:
+        {
+            isStop = false;
+            isFirstTime = true;
+            isSending = false;
+            isTerrainAnalysisFinished = false;
+            return 0;
         }
             break;
         }
@@ -366,17 +374,17 @@ int main(int argc, char *argv[])
     {
         std::cout << "you did not type in robot name, in this case ROBOT-III will start" << std::endl;
         //xml_address = "/usr/Robots/resource/Robot_Type_I/Robot_III/Robot_III.xml";
-        xml_address = "/home/hex/ArisVision/VisionStairs/Robot_III.xml";
+        xml_address = "/home/hex/ArisVision/VisionStepOnOverDown/Robot_III.xml";
     }
     else if (std::string(argv[1]) == "III")
     {
         //xml_address = "/usr/Robots/resource/Robot_Type_I/Robot_III/Robot_III.xml";
-        xml_address = "/home/hex/ArisVision/VisionStairs/Robot_III.xml";
+        xml_address = "/home/hex/ArisVision/VisionStepOnOverDown/Robot_III.xml";
     }
     else if (std::string(argv[1]) == "VIII")
     {
         //xml_address = "/usr/Robots/resource/Robot_Type_I/Robot_VIII/Robot_VIII.xml";
-        xml_address = "/home/hex/ArisVision/VisionStairs/Robot_VIII.xml";
+        xml_address = "/home/hex/ArisVision/VisionStepOnOverDown/Robot_VIII.xml";
     }
     else
     {

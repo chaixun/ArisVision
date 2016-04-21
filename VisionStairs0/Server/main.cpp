@@ -366,17 +366,17 @@ int main(int argc, char *argv[])
     {
         std::cout << "you did not type in robot name, in this case ROBOT-III will start" << std::endl;
         //xml_address = "/usr/Robots/resource/Robot_Type_I/Robot_III/Robot_III.xml";
-        xml_address = "/home/hex/ArisVision/VisionStairs/Robot_III.xml";
+        xml_address = "/home/hex/ArisVision/VisionStairs0/Robot_III.xml";
     }
     else if (std::string(argv[1]) == "III")
     {
         //xml_address = "/usr/Robots/resource/Robot_Type_I/Robot_III/Robot_III.xml";
-        xml_address = "/home/hex/ArisVision/VisionStairs/Robot_III.xml";
+        xml_address = "/home/hex/ArisVision/VisionStairs0/Robot_III.xml";
     }
     else if (std::string(argv[1]) == "VIII")
     {
         //xml_address = "/usr/Robots/resource/Robot_Type_I/Robot_VIII/Robot_VIII.xml";
-        xml_address = "/home/hex/ArisVision/VisionStairs/Robot_VIII.xml";
+        xml_address = "/home/hex/ArisVision/VisionStairs0/Robot_VIII.xml";
     }
     else
     {
