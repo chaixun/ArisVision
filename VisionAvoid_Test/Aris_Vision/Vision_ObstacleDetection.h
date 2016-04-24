@@ -5,6 +5,8 @@
 #include <vector>
 #include <algorithm>
 #include <string.h>
+#include <sstream>
+#include <fstream>
 #include "Vision_RobotPos.h"
 
 using namespace std;

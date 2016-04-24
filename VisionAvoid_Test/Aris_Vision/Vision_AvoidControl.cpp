@@ -49,7 +49,7 @@ void AvoidControl::AvoidWalkControl(Pose cTargetPos, Pose cRobotPos, vector<Obst
     memset(&avoidWalkParam, 0, sizeof(avoidWalkParam));
     double robotWalkDirection[14];
     double robotWalkVector[14][2];
-    double robotwalkStepNum = 3;
+    double robotwalkStepNum = 2;
 
     double robotWalkStepLength[14] = {0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.45, 0.40, 0.35, 0.30, 0.25, 0.20, 0};
 
@@ -60,12 +60,18 @@ void AvoidControl::AvoidWalkControl(Pose cTargetPos, Pose cRobotPos, vector<Obst
         robotWalkDirection[i] = i*15*M_PI/180;
     }
 
-    robotWalkDirection[13] = atan((cTargetPos.Y - cRobotPos.Y)/(cTargetPos.X - cRobotPos.X));
-
+    if((cTargetPos.X - cRobotPos.X) < 0.5)
+    {
+          robotWalkDirection[13] = M_PI/2;
+    }
+    else
+    {
+        robotWalkDirection[13] = atan((cTargetPos.Y - cRobotPos.Y)/(cTargetPos.X - cRobotPos.X));
+    }
     for(int i = 0; i < 14; i++)
     {
         robotWalkVector[i][0] = 1*cos(robotWalkDirection[i]);
-        robotWalkVector[i][2] = 1*sin(robotWalkDirection[i]);
+        robotWalkVector[i][1] = 1*sin(robotWalkDirection[i]);
     }
 
     robotWalkStepLength[13] = 0.50 - fabs(robotWalkDirection[13] - M_PI/2)*0.3/(M_PI/2);
@@ -123,7 +129,7 @@ void AvoidControl::AvoidWalkControl(Pose cTargetPos, Pose cRobotPos, vector<Obst
             nextRobotPos = tempRobotPos;
         }
     }
-
+    cout<<"Direction Num: ------"<<directionLabel<<endl;
     avoidWalkParam.stepLength = robotWalkStepLength[directionLabel];
     avoidWalkParam.stepNum = robotwalkStepNum;
     avoidWalkParam.walkDirection = robotWalkDirection[directionLabel] + M_PI/2;

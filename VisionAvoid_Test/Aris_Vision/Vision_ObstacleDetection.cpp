@@ -7,6 +7,7 @@ vector<int> rowRun;
 vector<int> runLabels;
 vector<pair<int, int>> equivalences;
 int offset;
+int frames_num = 0;
 
 ObstacleDetection::ObstacleDetection()
 {
@@ -157,9 +158,10 @@ void FindObstacle(vector<int>& stRun, vector<int>& enRun, vector<int>& rowRun, i
             double right = (*max_element(end.begin(), end.end())) * 0.025;
 
             ObstaclePosition tempObsPos;
-            tempObsPos.X = (left + right)/2 - 1.5;
+            tempObsPos.X = -((left + right)/2 - 1.5);
             tempObsPos.Y = (down + up)/2;
-            tempObsPos.radius = sqrt(pow((tempObsPos.X - left), 2) + pow((tempObsPos.Y - down), 2));
+//            tempObsPos.radius = sqrt(pow((tempObsPos.X - left), 2) + pow((tempObsPos.Y - down), 2));
+            tempObsPos.radius = sqrt(pow((right - left)/2, 2) + pow((up - down)/2, 2));
 
             ObstaclePosition obsGCS;
             obsGCS.X = tempObsPos.X*cos(cRobotPos.alpha) - tempObsPos.Y*sin(cRobotPos.alpha) + cRobotPos.X;
@@ -188,6 +190,23 @@ void ObstacleDetection::ObstacleDetecting(const int obstacleMap[120][120], Pose 
     offset = 1;
     obsNum = 0;
     obsPoses.clear();
+
+    std::stringstream out;
+    out<<frames_num;
+    std::string filename = "ObstacleMap" + out.str() + ".txt";
+    std::ofstream Obstaclemapfile(filename);
+    if (Obstaclemapfile.is_open())
+    {
+        for(int i = 0; i < 120; i++)
+        {
+            for(int j = 0; j < 120; j++)
+            {
+                Obstaclemapfile<<cObstacleMap[i][j]<<" ";
+            }
+            Obstaclemapfile<<std::endl;
+        }
+    }
+    frames_num++;
 
     fillRunVectors(cObstacleMap, numberOfRuns, stRun, enRun, rowRun);
 

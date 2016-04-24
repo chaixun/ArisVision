@@ -183,7 +183,7 @@ void GenerateObstacleMap(VISION_DATA &cdata)
    {
        for(int j = 0; j < 120; j++)
        {
-           if(cdata.gridMap[i][j] > 0.05)
+           if(cdata.gridMap[i][j] > 0.1)
            {
                cdata.obstacleMap[i][j] = 1;
            }
