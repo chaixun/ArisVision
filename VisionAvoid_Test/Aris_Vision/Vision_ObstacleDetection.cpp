@@ -149,18 +149,24 @@ void FindObstacle(vector<int>& stRun, vector<int>& enRun, vector<int>& rowRun, i
                 row.push_back(rowRun[j] + 1);
             }
         }
-        if (row.size()>3)
+
+        float down = (*min_element(row.begin(), row.end()) - 1) * 0.025;
+        float up = (*max_element(row.begin(), row.end())) * 0.025;
+
+        float right = (*min_element(start.begin(), start.end()) - 1) * 0.025;
+        float left = (*max_element(end.begin(), end.end())) * 0.025;
+
+        int obsArea = 0;
+        for(int i = 0; i < row.size(); i++)
         {
-            double down = (*min_element(row.begin(), row.end()) - 1) * 0.025;
-            double up = (*max_element(row.begin(), row.end())) * 0.025;
+           obsArea = obsArea + end.at(i) - start.at(i) + 1;
+        }
 
-            double left = (*min_element(start.begin(), start.end()) - 1) * 0.025;
-            double right = (*max_element(end.begin(), end.end())) * 0.025;
-
+        if (row.size()> 5&&fabs(left - right) > 0.125 && obsArea > 25)
+        {
             ObstaclePosition tempObsPos;
             tempObsPos.X = -((left + right)/2 - 1.5);
             tempObsPos.Y = (down + up)/2;
-//            tempObsPos.radius = sqrt(pow((tempObsPos.X - left), 2) + pow((tempObsPos.Y - down), 2));
             tempObsPos.radius = sqrt(pow((right - left)/2, 2) + pow((up - down)/2, 2));
 
             ObstaclePosition obsGCS;

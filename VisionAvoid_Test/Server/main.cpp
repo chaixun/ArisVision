@@ -67,7 +67,15 @@ static auto visionThread = std::thread([]()
 
             if(obstacleDetectionResult.obsPoses.size() > 0)
             {
-                obsPosesGCS.push_back(obstacleDetectionResult.obsPoses[0]);
+                if(obsPosesGCS.size() == 0)
+                {
+                    obsPosesGCS.push_back(obstacleDetectionResult.obsPoses[0]);
+                }
+                else if(fabs(obsPosesGCS.back().X - obstacleDetectionResult.obsPoses[0].X) < obsPosesGCS.back().radius
+                        &&fabs(obsPosesGCS.back().Y - obstacleDetectionResult.obsPoses[0].Y) < obsPosesGCS.back().radius)
+                {
+                    obsPosesGCS.push_back(obstacleDetectionResult.obsPoses[0]);
+                }
             }
 
             avoidControlResult.AvoidWalkControl(targetPos, robotPosResult.robotPoses.back(), obsPosesGCS);
