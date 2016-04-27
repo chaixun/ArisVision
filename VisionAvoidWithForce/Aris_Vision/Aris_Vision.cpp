@@ -183,7 +183,7 @@ void GenerateObstacleMap(VISION_DATA &cdata)
     {
         for(int j = 0; j < 120; j++)
         {
-            if(cdata.gridMap[i][j] > 0.1)
+            if(cdata.gridMap[i][j] > 0.2)
             {
                 cdata.obstacleMap[i][j] = 1;
             }
@@ -348,8 +348,8 @@ void KINECT_BASE::updateData(VISION_DATA &data)
     //Kinect On Robot
         Matrix4f kinectToRobot;
         kinectToRobot<< 1, 0, 0, 0,
-                0, 0.891, -0.454, 1.111,
-                0, 0.454, 0.891, 0,
+                0, 0.8746, -0.4848, 0.9610,
+                0, 0.4848, 0.8746, 0,
                 0, 0, 0, 1;
 
     Matrix4f robotToWorld;
