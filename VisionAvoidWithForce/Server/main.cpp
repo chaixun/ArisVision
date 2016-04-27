@@ -5,6 +5,8 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <thread>
+#include <chrono>
 
 using namespace std;
 
@@ -41,47 +43,15 @@ RobotPose robotPosResult;
 ObstacleDetection obstacleDetectionResult;
 vector<ObstaclePosition> obsPosesGCS;
 AvoidControl avoidControlResult;
-float nextPositionGCS[2]{0, 0};
-
-static auto visionThread = std::thread([]()
-{   
-    while(true)
-    {
-        auto visiondata = kinect1.getSensorData();
-
-        //        terrainAnalysisResult.TerrainAnalyze(visiondata.get().gridMap, visiondata.get().pointCloud);
-
-        obstacleDetectionResult.ObstacleDetecting(visiondata.get().obstacleMap);
-
-        if(isWriteData = true)
-        {
-            cout<<"Begin Write Data-----"<<endl;
-            if(obstacleDetectionResult.obsPoses.size() > 0)
-            {
-                nextPositionGCS[0] = obstacleDetectionResult.nextPosition[0];
-                nextPositionGCS[1] = obstacleDetectionResult.nextPosition[1];
-            }
-            else
-            {
-                nextPositionGCS[0] = 0;
-                nextPositionGCS[1] = 0;
-            }
-            cout<<"NextPosition X:"<<nextPositionGCS[0]<<" Y:"<<nextPositionGCS[1]<<endl;
-            cout<<"Finish Write Data-----"<<endl;
-            isWriteData = false;
-        }
-        sleep(1800);
-
-    }
-});
+float nextPositionGCS[2]{-200, -200};
 
 static auto readThread = std::thread([]()
 {
-    sleep(3000);
+    //sleep(3000);
     while(true)
     {
-        sleep(1800);
-        if(isWriteData = false)
+        //sleep(1000);
+        if(isWriteData == false)
         {
             cout<<"Begin Read Data-----"<<endl;
             cout<<"NextPosition X:"<<nextPositionGCS[0]<<" Y:"<<nextPositionGCS[1]<<endl;
@@ -91,6 +61,39 @@ static auto readThread = std::thread([]()
     }
 
 });
+
+static auto visionThread = std::thread([]()
+{
+    while(true)
+    {
+        //terrainAnalysisResult.TerrainAnalyze(visiondata.get().gridMap, visiondata.get().pointCloud);
+
+        if(isWriteData == true)
+        {
+            auto visiondata = kinect1.getSensorData();
+            obstacleDetectionResult.ObstacleDetecting(visiondata.get().obstacleMap);
+
+            terrainAnalysisResult.TerrainAnalyze(visiondata.get().gridMap, visiondata.get().pointCloud);
+            cout<<"Begin Write Data-----"<<endl;
+            if(obstacleDetectionResult.obsPoses.size() > 0)
+            {
+                nextPositionGCS[0] = obstacleDetectionResult.nextPosition[0].X;
+                nextPositionGCS[1] = obstacleDetectionResult.nextPosition[0].Y;
+            }
+            else
+            {
+                nextPositionGCS[0] = -200;
+                nextPositionGCS[1] = -200;
+            }
+            cout<<"NextPosition X:"<<nextPositionGCS[0]<<" Y:"<<nextPositionGCS[1]<<endl;
+            cout<<obstacleDetectionResult.frames_num<<endl;
+            cout<<"Finish Write Data-----"<<endl;
+            isWriteData = false;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(600));
+    }
+});
+
 
 auto visionWalkParse(const std::string &cmd, const std::map<std::string, std::string> &params, aris::core::Msg &msg_out)->void
 {

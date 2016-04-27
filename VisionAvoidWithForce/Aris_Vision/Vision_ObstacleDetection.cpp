@@ -7,11 +7,10 @@ vector<int> rowRun;
 vector<int> runLabels;
 vector<pair<int, int>> equivalences;
 int offset;
-int frames_num = 0;
 
 ObstacleDetection::ObstacleDetection()
 {
-    ;
+    frames_num = 0;
 }
 ObstacleDetection::~ObstacleDetection()
 {
@@ -127,10 +126,8 @@ void replaceSameLabel(vector<int>& runLabels, vector<pair<int, int>>& equivalenc
     }
 }
 
-void FindObstacle(vector<int>& stRun, vector<int>& enRun, vector<int>& rowRun, int numberOfRuns, vector<int>& runLabels, int & obsNum, vector<ObstaclePosition> & obsPos, float nextPosition[2])
+void FindObstacle(vector<int>& stRun, vector<int>& enRun, vector<int>& rowRun, int numberOfRuns, vector<int>& runLabels, int & obsNum, vector<ObstaclePosition> & obsPos, vector <Position> &nextPosition)
 {
-    nextPosition[0] = 0;
-    nextPosition[1] = 0;
     int cobsNum = *max_element(runLabels.begin(), runLabels.end());
 
     vector<int> start;
@@ -168,21 +165,24 @@ void FindObstacle(vector<int>& stRun, vector<int>& enRun, vector<int>& rowRun, i
         tempObsPos.X = (left + right)/2 - 1.5;
         tempObsPos.Y = (down + up)/2;
         tempObsPos.radius = sqrt(pow((right - left)/2, 2) + pow((up - down)/2, 2));
+        Position tempNextPosition = {0, 0};
 
-        if (row.size()> 5&&fabs(left - right) > 0.125 && obsArea > 25)
+        if (row.size()> 5&&fabs(left - right) > 0.125 && obsArea > 25&&tempNextPosition.Y > 0.7&&tempNextPosition.Y < 2)
+            //if (row.size()> 5&&fabs(left - right) > 0.125 && obsArea > 25)
         {
             if(tempObsPos.X >= 0)
             {
-                nextPosition[0] = tempObsPos.X - tempObsPos.radius - 0.7;
-                nextPosition[1] = tempObsPos.Y;
+                tempNextPosition.X = tempObsPos.X - tempObsPos.radius - 0.7;
+                tempNextPosition.Y= tempObsPos.Y;
             }
             else
             {
-                nextPosition[0] = tempObsPos.X + tempObsPos.radius + 0.7;
-                nextPosition[1] = tempObsPos.Y;
+                tempNextPosition.X = tempObsPos.X + tempObsPos.radius + 0.7;
+                tempNextPosition.Y = tempObsPos.Y;
             }
 
             obsPos.push_back(tempObsPos);
+            nextPosition.push_back(tempNextPosition);
 
             obsNum = obsNum + 1;
         }
@@ -204,6 +204,7 @@ void ObstacleDetection::ObstacleDetecting(const int obstacleMap[120][120])
     offset = 1;
     obsNum = 0;
     obsPoses.clear();
+    nextPosition.clear();
 
     std::stringstream out;
     out<<frames_num;

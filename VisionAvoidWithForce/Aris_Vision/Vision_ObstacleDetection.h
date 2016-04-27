@@ -18,13 +18,20 @@ struct ObstaclePosition
 	double radius;
 };
 
+struct Position
+{
+    float X;
+    float Y;
+};
+
 class ObstacleDetection
 {
 public:
     ObstacleDetection();
     ~ObstacleDetection();
+    int frames_num;
     int obsNum;
-    float nextPosition[2];
+    vector <Position> nextPosition;
     vector<ObstaclePosition> obsPoses;
     void ObstacleDetecting(const int obstacleMap[120][120]);
 };
