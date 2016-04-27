@@ -67,20 +67,20 @@ void TerrainAnalysis::TerrainAnalyze(const float oriGridMap[120][120], const flo
         }
     }
 
-    std::stringstream out1;
-    out1<<frame_num;
-    std::string filename1 = "PointCloud" + out1.str() + ".txt";
-    std::ofstream pointCloudfile(filename1);
-    if (pointCloudfile.is_open())
-    {
-        for (int i = 0; i < 480; i++)
-        {
-            for(int j = 0; j < 640; j++)
-            {
-                pointCloudfile<<cPointCloud[i][j][0]<<" "<<cPointCloud[i][j][1]<<" "<<cPointCloud[i][j][2]<<std::endl;
-            }
-        }
-    }
+//    std::stringstream out1;
+//    out1<<frame_num;
+//    std::string filename1 = "PointCloud" + out1.str() + ".txt";
+//    std::ofstream pointCloudfile(filename1);
+//    if (pointCloudfile.is_open())
+//    {
+//        for (int i = 0; i < 480; i++)
+//        {
+//            for(int j = 0; j < 640; j++)
+//            {
+//                pointCloudfile<<cPointCloud[i][j][0]<<" "<<cPointCloud[i][j][1]<<" "<<cPointCloud[i][j][2]<<std::endl;
+//            }
+//        }
+//    }
 
     frame_num++;
 }
