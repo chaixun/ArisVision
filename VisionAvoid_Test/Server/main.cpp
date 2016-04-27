@@ -35,7 +35,7 @@ VISION_WALK_PARAM visionWalkParam;
 
 aris::control::Pipe<int> visionPipe(true);
 
-Pose targetPos{0, 5, 0, 0, 0, 0};
+Pose targetPos{1, 5, 0, 0, 0, 0};
 RobotPose robotPosResult;
 ObstacleDetection obstacleDetectionResult;
 vector<ObstaclePosition> obsPosesGCS;
@@ -98,15 +98,15 @@ static auto visionThread = std::thread([]()
             visionWalkParam.walkNum = avoidControlResult.avoidWalkParam.stepNum;
             if(visionWalkParam.walkNum == 1)
             {
-                visionWalkParam.totalCount = 1800;
+                visionWalkParam.totalCount = 1500;
             }
             else if(visionWalkParam.walkNum == 2)
             {
-                visionWalkParam.totalCount = 3600;
+                visionWalkParam.totalCount = 3000;
             }
             else if(visionWalkParam.walkNum > 2)
             {
-                visionWalkParam.totalCount = 3600*(visionWalkParam.walkNum - 1.5);
+                visionWalkParam.totalCount = 3000*(visionWalkParam.walkNum - 1.5);
             }
 
         }
@@ -289,5 +289,4 @@ int main(int argc, char *argv[])
     aris::core::runMsgLoop();
 
     return 0;
-
 }
