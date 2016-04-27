@@ -338,12 +338,19 @@ void KINECT_BASE::updateData(VISION_DATA &data)
     //            0, 0.5, 0.866, 0,
     //            0, 0, 0, 1;
 
-    Matrix4f kinectToRobot;
-    kinectToRobot<< 1, 0, 0, 0,
-            0, 0.891, -0.454, 0.797,
-            0, 0.454, 0.891, 0,
-            0, 0, 0, 1;
+    //Kinect On Desk
+//    Matrix4f kinectToRobot;
+//    kinectToRobot<< 1, 0, 0, 0,
+//            0, 0.891, -0.454, 0.797,
+//            0, 0.454, 0.891, 0,
+//            0, 0, 0, 1;
 
+    //Kinect On Robot
+        Matrix4f kinectToRobot;
+        kinectToRobot<< 1, 0, 0, 0,
+                0, 0.891, -0.454, 1.111,
+                0, 0.454, 0.891, 0,
+                0, 0, 0, 1;
 
     Matrix4f robotToWorld;
     robotToWorld << 1, 0, 0, 0,
