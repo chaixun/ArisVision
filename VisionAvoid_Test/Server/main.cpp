@@ -35,7 +35,7 @@ VISION_WALK_PARAM visionWalkParam;
 
 aris::control::Pipe<int> visionPipe(true);
 
-Pose targetPos{1, 5, 0, 0, 0, 0};
+Pose targetPos{0, 8, 0, 0, 0, 0};
 RobotPose robotPosResult;
 ObstacleDetection obstacleDetectionResult;
 vector<ObstaclePosition> obsPosesGCS;
