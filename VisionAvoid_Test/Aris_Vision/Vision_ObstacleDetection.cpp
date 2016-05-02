@@ -221,5 +221,6 @@ void ObstacleDetection::ObstacleDetecting(const int obstacleMap[120][120], Pose 
         firstPass(stRun, enRun, rowRun, numberOfRuns, runLabels, equivalences, offset);
         replaceSameLabel(runLabels, equivalences);
         FindObstacle(stRun, enRun, rowRun, numberOfRuns, runLabels, obsNum, obsPoses, cRobotPos);
+        cout<<"Num of Obstalces: "<<obsNum<<endl;
     }
 }

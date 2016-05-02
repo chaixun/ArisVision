@@ -27,13 +27,13 @@ double PenaltyParameter(Pose cRobotPos, ObstaclePosition cObstaclePos)
 
     for(int i = 0; i < 2; i++)
     {
-        if(distance[i] <= 0.05)
+        if(distance[i] <= 0.1)
         {
             cPenaltyValue[i] = 1;
         }
-        else if(distance[i] >= 0.05&&distance[i] <= 0.2)
+        else if(distance[i] >= 0.1&&distance[i] <= 0.2)
         {
-            cPenaltyValue[i] = 0.5*(1 + tanh(1/(distance[i] - 0.05) + 1/(distance[i] - 0.2)));
+            cPenaltyValue[i] = 0.5*(1 + tanh(1/(distance[i] - 0.1) + 1/(distance[i] - 0.2)));
         }
         else
         {
@@ -60,7 +60,7 @@ void AvoidControl::AvoidWalkControl(Pose cTargetPos, Pose cRobotPos, vector<Obst
         robotWalkDirection[i] = i*15*M_PI/180;
     }
 
-    if((cTargetPos.X - cRobotPos.X) < 0.5)
+    if((cTargetPos.X - cRobotPos.X) < 0.001)
     {
           robotWalkDirection[13] = M_PI/2;
     }

@@ -57,7 +57,7 @@ static auto visionThread = std::thread([]()
         cout<<"abs X: "<<fabs(robotPosResult.robotPoses.back().X - targetPos.X)<<endl;
         cout<<"abs Y: "<<fabs(robotPosResult.robotPoses.back().Y - targetPos.Y)<<endl;
 
-        if(fabs(robotPosResult.robotPoses.back().Y - targetPos.Y) <= 0.19&&fabs(robotPosResult.robotPoses.back().X - targetPos.X) <= 0.19)
+        if(sqrt(pow((robotPosResult.robotPoses.back().Y - targetPos.Y),2)+pow((robotPosResult.robotPoses.back().X - targetPos.X),2)) <= 0.2)
         {
             visionWalkParam.movetype = nomove;
         }
@@ -71,21 +71,21 @@ static auto visionThread = std::thread([]()
                 {
                     obsPosesGCS.push_back(obstacleDetectionResult.obsPoses[0]);
                 }
-                else if(fabs(obsPosesGCS.back().X - obstacleDetectionResult.obsPoses[0].X) < obsPosesGCS.back().radius
-                        &&fabs(obsPosesGCS.back().Y - obstacleDetectionResult.obsPoses[0].Y) < obsPosesGCS.back().radius)
+                else if(fabs(obsPosesGCS.back().X - obstacleDetectionResult.obsPoses[0].X) > obsPosesGCS.back().radius
+                        ||fabs(obsPosesGCS.back().Y - obstacleDetectionResult.obsPoses[0].Y) > obsPosesGCS.back().radius)
                 {
                     obsPosesGCS.push_back(obstacleDetectionResult.obsPoses[0]);
                 }
             }
 
-            avoidControlResult.AvoidWalkControl(targetPos, robotPosResult.robotPoses.back(), obsPosesGCS);
-
-            robotPosResult.robotPoses.push_back(avoidControlResult.nextRobotPos);
-
             for(int i = 0; i < obsPosesGCS.size(); i++)
             {
                 cout<<"Obs "<<i<<" Pos: X:"<<obsPosesGCS[i].X<<" Y:"<<obsPosesGCS[i].Y<<" Radius:"<<obsPosesGCS[i].radius<<endl;
             }
+
+            avoidControlResult.AvoidWalkControl(targetPos, robotPosResult.robotPoses.back(), obsPosesGCS);
+
+            robotPosResult.robotPoses.push_back(avoidControlResult.nextRobotPos);
 
             cout<<"Walk Step Num: "<<avoidControlResult.avoidWalkParam.stepNum<<endl;
             cout<<"Walk Step Len: "<<avoidControlResult.avoidWalkParam.stepLength<<endl;
@@ -98,15 +98,15 @@ static auto visionThread = std::thread([]()
             visionWalkParam.walkNum = avoidControlResult.avoidWalkParam.stepNum;
             if(visionWalkParam.walkNum == 1)
             {
-                visionWalkParam.totalCount = 1500;
+                visionWalkParam.totalCount = 1200;
             }
             else if(visionWalkParam.walkNum == 2)
             {
-                visionWalkParam.totalCount = 3000;
+                visionWalkParam.totalCount = 2400;
             }
             else if(visionWalkParam.walkNum > 2)
             {
-                visionWalkParam.totalCount = 3000*(visionWalkParam.walkNum - 1.5);
+                visionWalkParam.totalCount = 2400*(visionWalkParam.walkNum - 1.5);
             }
 
         }
