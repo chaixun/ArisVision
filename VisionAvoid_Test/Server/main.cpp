@@ -57,7 +57,7 @@ static auto visionThread = std::thread([]()
         cout<<"abs X: "<<fabs(robotPosResult.robotPoses.back().X - targetPos.X)<<endl;
         cout<<"abs Y: "<<fabs(robotPosResult.robotPoses.back().Y - targetPos.Y)<<endl;
 
-        if(sqrt(pow((robotPosResult.robotPoses.back().Y - targetPos.Y),2)+pow((robotPosResult.robotPoses.back().X - targetPos.X),2)) <= 0.2)
+        if(sqrt(pow((robotPosResult.robotPoses.back().Y - targetPos.Y),2)+pow((robotPosResult.robotPoses.back().X - targetPos.X),2)) <= 0.35)
         {
             visionWalkParam.movetype = nomove;
         }
@@ -100,15 +100,10 @@ static auto visionThread = std::thread([]()
             {
                 visionWalkParam.totalCount = 1200;
             }
-            else if(visionWalkParam.walkNum == 2)
+            else
             {
-                visionWalkParam.totalCount = 2400;
+                visionWalkParam.totalCount = 2400*(visionWalkParam.walkNum - 0.5);
             }
-            else if(visionWalkParam.walkNum > 2)
-            {
-                visionWalkParam.totalCount = 2400*(visionWalkParam.walkNum - 1.5);
-            }
-
         }
 
         isAvoidAnalysisFinished = true;

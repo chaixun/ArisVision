@@ -62,7 +62,7 @@ void AvoidControl::AvoidWalkControl(Pose cTargetPos, Pose cRobotPos, vector<Obst
 
     if((cTargetPos.X - cRobotPos.X) < 0.001)
     {
-          robotWalkDirection[13] = M_PI/2;
+        robotWalkDirection[13] = M_PI/2;
     }
     else
     {
@@ -86,29 +86,17 @@ void AvoidControl::AvoidWalkControl(Pose cTargetPos, Pose cRobotPos, vector<Obst
 
         for(int j = 0; j < robotwalkStepNum; j++)
         {
-            if(robotwalkStepNum == 1 || robotwalkStepNum == 2)
+            if(j == 0)
             {
                 tempRobotPos.X = tempRobotPos.X + 0.5*robotWalkStepLength[i]*robotWalkVector[i][0];
                 tempRobotPos.Y = tempRobotPos.Y + 0.5*robotWalkStepLength[i]*robotWalkVector[i][1];
             }
             else
             {
-                if(j == 0)
-                {
-                    tempRobotPos.X = tempRobotPos.X + 0.5*robotWalkStepLength[i]*robotWalkVector[i][0];
-                    tempRobotPos.Y = tempRobotPos.Y + 0.5*robotWalkStepLength[i]*robotWalkVector[i][1];
-                }
-                else if(j < robotwalkStepNum - 1)
-                {
-                    tempRobotPos.X = tempRobotPos.X + robotWalkStepLength[i]*robotWalkVector[i][0];
-                    tempRobotPos.Y = tempRobotPos.Y + robotWalkStepLength[i]*robotWalkVector[i][1];
-                }
-                else
-                {
-                    tempRobotPos.X = tempRobotPos.X + 0.5*robotWalkStepLength[i]*robotWalkVector[i][0];
-                    tempRobotPos.Y = tempRobotPos.Y + 0.5*robotWalkStepLength[i]*robotWalkVector[i][1];
-                }
+                tempRobotPos.X = tempRobotPos.X + robotWalkStepLength[i]*robotWalkVector[i][0];
+                tempRobotPos.Y = tempRobotPos.Y + robotWalkStepLength[i]*robotWalkVector[i][1];
             }
+
             if (cObstaclePoses.size() > 0)
             {
                 for(vector<ObstaclePosition>::iterator obsIter = cObstaclePoses.begin(); obsIter != cObstaclePoses.end(); obsIter++ )
