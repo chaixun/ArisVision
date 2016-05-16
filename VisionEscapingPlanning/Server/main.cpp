@@ -20,7 +20,6 @@ using namespace std;
 
 #include "GaitMove.h"
 
-
 #include "rtdk.h"
 #include "unistd.h"
 
@@ -234,13 +233,19 @@ auto stopVisionWalkParse(const std::string &cmd, const std::map<std::string, std
 
 int main(int argc, char *argv[])
 {   
-    double realLeftObs[4][3] = {{-1, 3, 0.5}, {-1, 6, 0.25}, {-1, 8, 0.25}, {-1, 10, 0.25}};
-    double realRightObs[3][3] = {{2, 3, 0.25}, {2, 6, 0.25}, {2, 9, 0.5}};
-
     robPoses.clear();
 
     RobPose startPose = {-1, 0, 0, 0, 0, 0};
     RobPose targetPose = {0, 11, 0, 0, 0, 0};
+
+    double realLeftObs[4][3] = {{-1, 3, 0.5}, {-1, 6, 0.25}, {-1, 8, 0.25}, {-1, 10, 0.25}};
+    double realRightObs[3][3] = {{2, 3, 0.25}, {2, 6, 0.25}, {2, 9, 0.5}};
+
+    //    RobPose startPose = {0, 0, 0, 0, 0, 0};
+    //    RobPose targetPose = {0, 11, 0, 0, 0, 0};
+
+    //    double realLeftObs[4][3] = {{-1, 3, 0.25}, {-1, 6, 0.25}, {-1, 8, 0.25}, {-1, 10, 0.25}};
+    //    double realRightObs[3][3] = {{1, 3, 0.25}, {1, 6, 0.25}, {1, 9, 0.25}};
 
     robPoses.push_back(startPose);
     robPoses.push_back(targetPose);
@@ -263,7 +268,6 @@ int main(int argc, char *argv[])
         rObsPoses.push_back(tempObs);
     }
 
-
     kinect1.start();
 
     std::string xml_address;
@@ -272,7 +276,7 @@ int main(int argc, char *argv[])
     {
         std::cout << "you did not type in robot name, in this case ROBOT-III will start" << std::endl;
         //xml_address = "/usr/Robots/resource/Robot_Type_I/Robot_III/Robot_III.xml";
-        xml_address = "/home/hex/ArisVision/VisionAvoid/Robot_III.xml";
+        xml_address = "/home/hex/ArisVision/VisionEscapingPlanning/Robot_III.xml";
     }
     else if (std::string(argv[1]) == "III")
     {

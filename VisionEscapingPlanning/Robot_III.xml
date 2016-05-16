@@ -538,9 +538,9 @@
             <swk/>
             <ewk default="ewk_param">
                 <ewk_param type="unique">
-                  <g abbrevation="g"/>
-                  <b abbrevation="b"/>
-                  <s abbrevation="s"/>
+                  <g abbreviation="g"/>
+                  <b abbreviation="b"/>
+                  <s abbreviation="s"/>
                 </ewk_param>
             </ewk>
         </Commands>
