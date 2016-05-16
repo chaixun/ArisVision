@@ -108,7 +108,7 @@ include_directories(${ALL_INCL_DIR})
 link_directories(${ALL_LINK_DIR})
 
 ################################### build server ####################################
-set(SOURCE_FILES main.cpp GaitMove.cpp RobObsPose.cpp EscapingPlanner.cpp Spline.h)
+set(SOURCE_FILES main.cpp GaitMove.cpp RobObsPose.cpp EscapingPlanner.cpp Spline.h AvoidMove.cpp)
 PREPEND(FULL_SRC Server ${SOURCE_FILES})
 
 set(VISION_SOURCE_FILES Aris_Vision.cpp Vision_Terrain0.cpp Vision_Gait0.cpp Vision_ObstacleDetection.cpp Vision_AvoidControl.cpp Vision_RobotPos.cpp)
