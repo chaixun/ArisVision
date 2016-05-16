@@ -7,16 +7,10 @@
 #include <string.h>
 #include <sstream>
 #include <fstream>
-#include "Vision_RobotPos.h"
+#include "RobObsPose.h"
 
 using namespace std;
-
-struct ObstaclePosition
-{  
-	double X;
-	double Y;
-	double radius;
-};
+using namespace RobObsPose;
 
 class ObstacleDetection
 {
@@ -24,8 +18,8 @@ public:
     ObstacleDetection();
     ~ObstacleDetection();
     int obsNum;
-    vector<ObstaclePosition> obsPoses;
-    void ObstacleDetecting(const int obstacleMap[120][120], Pose cRobotPos);
+    vector<ObsPose> obsPoses;
+    void ObstacleDetecting(const int obstacleMap[120][120], RobPose cRobotPos);
 };
 
 #endif

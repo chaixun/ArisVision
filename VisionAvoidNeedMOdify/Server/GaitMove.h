@@ -7,6 +7,7 @@
 #include <Robot_Gait.h>
 #include <Robot_Base.h>
 #include "EscapingPlanner.h"
+#include "rtdk.h"
 
 using namespace std;
 

@@ -8,6 +8,7 @@ VISION_WALK_PARAM VisionAvoidWrapper::visionWalkParam;
 aris::control::Pipe<int> VisionAvoidWrapper::visionPipe(true);
 std::thread VisionAvoidWrapper::visionThread;
 
+RobPose VisionAvoidWrapper::targetPos = {0, 8, 0, 0, 0, 0};
 vector<ObsPose> VisionAvoidWrapper::obsPosesGCS;
 
 TerrainAnalysis VisionAvoidWrapper::terrainAnalysisResult;
@@ -41,64 +42,61 @@ void VisionAvoidWrapper::KinectStart()
 
             auto visiondata = kinect1.getSensorData();
 
-            // terrainAnalysisResult.TerrainAnalyze(visiondata.get().gridMap, visiondata.get().pointCloud);
+            terrainAnalysisResult.TerrainAnalyze(visiondata.get().gridMap, visiondata.get().pointCloud);
 
+            //cout<<"Curr Robot Pos: X:"<<robotPosResult.robotPoses.back().X<<" Y:"<<robotPosResult.robotPoses.back().Y<<endl;
             cout<<"Curr Robot Pos: x:"<<robPoses.back().x<<" y:"<<robPoses.back().y<<" alpha:"<<robPoses.back().gama<<endl;
 
-            obstacleDetectionResult.ObstacleDetecting(visiondata.get().obstacleMap, robPoses.back());
+            cout<<"Target Pos: X:"<<targetPos.x<<" Y:"<<targetPos.y<<endl;
+            cout<<"abs X: "<<fabs(robPoses.back().x - targetPos.x)<<endl;
+            cout<<"abs Y: "<<fabs(robPoses.back().y - targetPos.y)<<endl;
 
-            if(obstacleDetectionResult.obsPoses.size() > 0)
+            if(sqrt(pow((robPoses.back().y - targetPos.y),2)+pow((robPoses.back().x - targetPos.x),2)) <= 0.35)
             {
-                if(obsPosesGCS.size() == 0)
-                {
-                    obsPosesGCS.push_back(obstacleDetectionResult.obsPoses[0]);
-                }
-                else if(fabs(obsPosesGCS.back().x - obstacleDetectionResult.obsPoses[0].x) > obsPosesGCS.back().r
-                        ||fabs(obsPosesGCS.back().y - obstacleDetectionResult.obsPoses[0].y) > obsPosesGCS.back().r)
-                {
-                    obsPosesGCS.push_back(obstacleDetectionResult.obsPoses[0]);
-                }
-            }
-
-            for(int i = 0; i < obsPosesGCS.size(); i++)
-            {
-                cout<<"Obs "<<i<<" Pos: x:"<<obsPosesGCS[i].x<<" y:"<<obsPosesGCS[i].y<<" radius:"<<obsPosesGCS[i].r<<endl;
-            }
-
-            avoidControlResult.AvoidWalkControl(robPoses.back(), obsPosesGCS);
-
-            robPoses.push_back(avoidControlResult.nextRobotPos);
-
-            cout<<"Walk Step Num: "<<avoidControlResult.avoidWalkParam.stepNum<<endl;
-            cout<<"Walk Step Len: "<<avoidControlResult.avoidWalkParam.stepLength<<endl;
-            cout<<"Walk Step Dir: "<<avoidControlResult.avoidWalkParam.walkDirection<<endl;
-            cout<<"Rob Pose : "<<avoidControlResult.avoidWalkParam.robHead<<endl;
-            cout<<"Next Robot Pos: x:"<<avoidControlResult.nextRobotPos.x<<" y:"<<avoidControlResult.nextRobotPos.y<<endl;
-
-            visionWalkParam.movetype = avoidmove;
-            visionWalkParam.walkLength = avoidControlResult.avoidWalkParam.stepLength;
-            visionWalkParam.walkDirection = avoidControlResult.avoidWalkParam.walkDirection;
-            visionWalkParam.walkNum = avoidControlResult.avoidWalkParam.stepNum;
-            visionWalkParam.turndata = avoidControlResult.avoidWalkParam.turnAngel;
-
-            if(visionWalkParam.walkNum == 1)
-            {
-                visionWalkParam.totalCount = 1200;
+                visionWalkParam.movetype = nomove;
             }
             else
             {
-                visionWalkParam.totalCount = 2400*(visionWalkParam.walkNum - 0.5);
-            }
+                obstacleDetectionResult.ObstacleDetecting(visiondata.get().obstacleMap, robPoses.back());
 
-            if(visionWalkParam.turndata != 0)
-            {
+                if(obstacleDetectionResult.obsPoses.size() > 0)
+                {
+                    if(obsPosesGCS.size() == 0)
+                    {
+                        obsPosesGCS.push_back(obstacleDetectionResult.obsPoses[0]);
+                    }
+                    else if(fabs(obsPosesGCS.back().x - obstacleDetectionResult.obsPoses[0].x) > obsPosesGCS.back().r
+                            ||fabs(obsPosesGCS.back().y - obstacleDetectionResult.obsPoses[0].y) > obsPosesGCS.back().r)
+                    {
+                        obsPosesGCS.push_back(obstacleDetectionResult.obsPoses[0]);
+                    }
+                }
+
+                for(int i = 0; i < obsPosesGCS.size(); i++)
+                {
+                    cout<<"Obs "<<i<<" Pos: X:"<<obsPosesGCS[i].x<<" Y:"<<obsPosesGCS[i].y<<" Radius:"<<obsPosesGCS[i].r<<endl;
+                }
+
+                avoidControlResult.AvoidWalkControl(targetPos, robPoses.back(), obsPosesGCS);
+
+                robPoses.push_back(avoidControlResult.nextRobotPos);
+
+                cout<<"Walk Step Num: "<<avoidControlResult.avoidWalkParam.stepNum<<endl;
+                cout<<"Walk Step Len: "<<avoidControlResult.avoidWalkParam.stepLength<<endl;
+                cout<<"Walk Step Dir: "<<avoidControlResult.avoidWalkParam.walkDirection<<endl;
+                cout<<"Next Robot Pos: X:"<<avoidControlResult.nextRobotPos.x<<" Y:"<<avoidControlResult.nextRobotPos.y<<endl;
+
+                visionWalkParam.movetype = avoidmove;
+                visionWalkParam.walkLength = avoidControlResult.avoidWalkParam.stepLength;
+                visionWalkParam.walkDirection = avoidControlResult.avoidWalkParam.walkDirection;
+                visionWalkParam.walkNum = avoidControlResult.avoidWalkParam.stepNum;
                 if(visionWalkParam.walkNum == 1)
                 {
-                    visionWalkParam.totalCount = 2000;
+                    visionWalkParam.totalCount = 1200;
                 }
                 else
                 {
-                    visionWalkParam.totalCount = 4000*(visionWalkParam.walkNum - 0.5);
+                    visionWalkParam.totalCount = 2400*(visionWalkParam.walkNum - 0.5);
                 }
             }
 
@@ -163,6 +161,7 @@ auto VisionAvoidWrapper::visionWalk(aris::dynamic::Model &model, const aris::dyn
 
         case turn:
         {
+
             int remainCount = RobotVisionWalk(robot, visionWalkParam);
             visionWalkParam.count++;
 
@@ -222,4 +221,5 @@ auto VisionAvoidWrapper::stopVisionWalkParse(const std::string &cmd, const std::
 {
     isStop = true;
 }
+
 }

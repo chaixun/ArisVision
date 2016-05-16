@@ -10,7 +10,7 @@ int RobotVisionWalk(Robots::RobotBase &robot, const VISION_WALK_PARAM &param)
     case avoidmove:
     {
         wk_param.alpha = param.walkDirection;
-        wk_param.beta = 0;
+        wk_param.beta = param.turndata;
         wk_param.d = param.walkLength;
         wk_param.h = 0.05;
         wk_param.n = param.walkNum;

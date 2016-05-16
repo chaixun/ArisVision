@@ -28,7 +28,8 @@ public:
         NOTSTART = 1,
         GENPATHFINISHED = 2,
         GENBODYANDFOOTFINISHED = 3,
-        PATHFOLLOWINGFINISHED = 4,
+        GAITSTART = 4,
+        PATHFOLLOWINGFINISHED = 5,
     };
 
     EscapingPlanner();
@@ -46,14 +47,14 @@ private:
     vector<Point2D> midPoints;
     vector<ObsPose> traLObsPoses;
     vector<ObsPose> traRObsPoses;
-    double halfStep = 0.4;
+    double halfStep = 0.3;
     double difXTraj = 0.045;
     vector<RobPose> bodyPoses;
 
     vector<FootHold> feetPoses;
     vector<double> curveX;
     vector<double> curveY;
-    int halfStepT = 2000;
+    int halfStepT = 3000;
     int timeStart;
     int timeLast;
     bool leftSwing = false;

@@ -108,13 +108,13 @@ include_directories(${ALL_INCL_DIR})
 link_directories(${ALL_LINK_DIR})
 
 ################################### build server ####################################
-set(SOURCE_FILES main.cpp GaitMove.cpp RobObsPose.cpp EscapingPlanner.cpp Spline.h AvoidMove.cpp)
+set(SOURCE_FILES main.cpp GaitMove.cpp EscapingPlanner.cpp Spline.h AvoidMove.cpp)
 PREPEND(FULL_SRC Server ${SOURCE_FILES})
 
-set(VISION_SOURCE_FILES Aris_Vision.cpp Vision_Terrain0.cpp Vision_Gait0.cpp Vision_ObstacleDetection.cpp Vision_AvoidControl.cpp Vision_RobotPos.cpp)
+set(VISION_SOURCE_FILES Aris_Vision.cpp Vision_Terrain0.cpp Vision_Gait0.cpp Vision_ObstacleDetection.cpp Vision_AvoidControl.cpp RobObsPose.cpp)
 PREPEND(VISION_FULL_SRC Aris_Vision ${VISION_SOURCE_FILES})
 
-add_executable(Server ${FULL_SRC} ${VISION_FULL_SRC})
+add_executable(Server ${VISION_FULL_SRC} ${FULL_SRC} Server/GaitMove.cpp)
 target_link_libraries(Server ${ALL_LINK_LIB})
 
 ################################### build client ####################################

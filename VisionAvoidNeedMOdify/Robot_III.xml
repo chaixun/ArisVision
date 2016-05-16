@@ -536,13 +536,13 @@
             <ro/>
             <vwk/>
             <swk/>
-<ewk>
-<ewk_param type="unique">
-<g abbrevation="g"/>
-<b abbrevation="b"/>
-<s abbrevation="s"/>
-</ewk_param>
-</ewk>
+            <ewk default="ewk_param">
+                <ewk_param type="unique">
+                  <g abbreviation="g"/>
+                  <b abbreviation="b"/>
+                  <s abbreviation="s"/>
+                </ewk_param>
+            </ewk>
         </Commands>
     </Server>
     <Controller>

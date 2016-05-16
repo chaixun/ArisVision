@@ -30,6 +30,7 @@ public:
     static aris::control::Pipe<int> visionPipe;
     static std::thread visionThread;
 
+    static RobPose targetPos;
     static vector<ObsPose> obsPosesGCS;
 
     static TerrainAnalysis terrainAnalysisResult;

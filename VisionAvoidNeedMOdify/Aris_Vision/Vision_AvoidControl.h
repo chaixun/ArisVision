@@ -2,7 +2,11 @@
 #define VISION_AVOIDCONTROL_H
 
 #include "Vision_ObstacleDetection.h"
+#include "RobObsPose.h"
+//#include "GaitMove.h"
 #include <math.h>
+
+using namespace RobObsPose;
 
 struct SimpleWalkParam
 {
@@ -17,8 +21,8 @@ public:
     SimpleWalkParam avoidWalkParam;
     AvoidControl(){}
     ~AvoidControl(){}
-    Pose nextRobotPos;
-    void AvoidWalkControl(Pose cTargetPos, Pose cRobotPos, vector<ObstaclePosition> cObstaclePoss);
+    RobPose nextRobotPos;
+    void AvoidWalkControl(RobPose cTargetPos, RobPose cRobotPos, vector<ObsPose> cObstaclePoss);
 };
 
 #endif // VISION_AVOIDCONTROL_H

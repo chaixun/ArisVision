@@ -13,6 +13,7 @@ ObstacleDetection::ObstacleDetection()
 {
     ;
 }
+
 ObstacleDetection::~ObstacleDetection()
 {
     ;
@@ -127,7 +128,7 @@ void replaceSameLabel(vector<int>& runLabels, vector<pair<int, int>>& equivalenc
     }
 }
 
-void FindObstacle(vector<int>& stRun, vector<int>& enRun, vector<int>& rowRun, int numberOfRuns, vector<int>& runLabels, int & obsNum, vector<ObstaclePosition> & obsPos, Pose cRobotPos)
+void FindObstacle(vector<int>& stRun, vector<int>& enRun, vector<int>& rowRun, int numberOfRuns, vector<int>& runLabels, int & obsNum, vector<ObsPose> &obsPos,RobObsPose::RobPose cRobotPos)
 {
     int cobsNum = *max_element(runLabels.begin(), runLabels.end());
 
@@ -164,15 +165,15 @@ void FindObstacle(vector<int>& stRun, vector<int>& enRun, vector<int>& rowRun, i
 
         if (row.size()> 5&&fabs(left - right) > 0.125 && obsArea > 25)
         {
-            ObstaclePosition tempObsPos;
-            tempObsPos.X = -((left + right)/2 - 1.5);
-            tempObsPos.Y = (down + up)/2;
-            tempObsPos.radius = sqrt(pow((right - left)/2, 2) + pow((up - down)/2, 2));
+            ObsPose tempObsPos;
+            tempObsPos.x = -((left + right)/2 - 1.5);
+            tempObsPos.y = (down + up)/2;
+            tempObsPos.r = sqrt(pow((right - left)/2, 2) + pow((up - down)/2, 2));
 
-            ObstaclePosition obsGCS;
-            obsGCS.X = tempObsPos.X*cos(cRobotPos.alpha) - tempObsPos.Y*sin(cRobotPos.alpha) + cRobotPos.X;
-            obsGCS.Y = tempObsPos.X*sin(cRobotPos.alpha) + tempObsPos.Y*cos(cRobotPos.alpha) + cRobotPos.Y;
-            obsGCS.radius = tempObsPos.radius;
+            ObsPose obsGCS;
+            obsGCS.x = tempObsPos.x*cos(cRobotPos.gama) - tempObsPos.y*sin(cRobotPos.gama) + cRobotPos.x;
+            obsGCS.y = tempObsPos.x*sin(cRobotPos.gama) + tempObsPos.y*cos(cRobotPos.gama) + cRobotPos.y;
+            obsGCS.r = tempObsPos.r;
 
             obsPos.push_back(obsGCS);
 
@@ -181,7 +182,7 @@ void FindObstacle(vector<int>& stRun, vector<int>& enRun, vector<int>& rowRun, i
     }
 }
 
-void ObstacleDetection::ObstacleDetecting(const int obstacleMap[120][120], Pose cRobotPos)
+void ObstacleDetection::ObstacleDetecting(const int obstacleMap[120][120], RobPose cRobotPos)
 {
 
     int cObstacleMap[120][120];

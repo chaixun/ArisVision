@@ -1,24 +1,24 @@
 #include "Vision_AvoidControl.h"
 
-void DistanceComputation(Pose cRobotPos, ObstaclePosition cObstaclePos, double cdistance[2])
+void DistanceComputation(RobPose cRobotPos, ObsPose cObstaclePos, double cdistance[2])
 {
     double l = 0.275;
     double robRadius = sqrt(l*l + 0.45*0.45);
 
-    double frontCenterX = l*cos(M_PI/2 + cRobotPos.gama) + cRobotPos.X;
-    double frontCenterY = l*sin(M_PI/2 + cRobotPos.gama) + cRobotPos.Y;
+    double frontCenterX = l*cos(M_PI/2 + cRobotPos.gama) + cRobotPos.x;
+    double frontCenterY = l*sin(M_PI/2 + cRobotPos.gama) + cRobotPos.y;
 
-    double backCenterX = l*cos(3*M_PI/2 + cRobotPos.gama) + cRobotPos.X;
-    double backCenterY = l*sin(3*M_PI/2 + cRobotPos.gama) + cRobotPos.Y;
+    double backCenterX = l*cos(3*M_PI/2 + cRobotPos.gama) + cRobotPos.x;
+    double backCenterY = l*sin(3*M_PI/2 + cRobotPos.gama) + cRobotPos.y;
 
-    double frontDistance = sqrt(pow((frontCenterX - cObstaclePos.X),2) + pow((frontCenterY - cObstaclePos.Y),2)) - robRadius - cObstaclePos.radius;
-    double backDistance = sqrt(pow((backCenterX - cObstaclePos.X),2) + pow((backCenterY - cObstaclePos.Y),2)) - robRadius - cObstaclePos.radius;
+    double frontDistance = sqrt(pow((frontCenterX - cObstaclePos.x),2) + pow((frontCenterY - cObstaclePos.y),2)) - robRadius - cObstaclePos.r;
+    double backDistance = sqrt(pow((backCenterX - cObstaclePos.x),2) + pow((backCenterY - cObstaclePos.y),2)) - robRadius - cObstaclePos.r;
 
     cdistance[0] = frontDistance;
     cdistance[1] = backDistance;
 }
 
-double PenaltyParameter(Pose cRobotPos, ObstaclePosition cObstaclePos)
+double PenaltyParameter(RobPose cRobotPos, ObsPose cObstaclePos)
 {
     double distance[2]{0, 0};
     double cPenaltyValue[2]{0, 0};
@@ -44,7 +44,7 @@ double PenaltyParameter(Pose cRobotPos, ObstaclePosition cObstaclePos)
     return penaltyValue;
 }
 
-void AvoidControl::AvoidWalkControl(Pose cTargetPos, Pose cRobotPos, vector<ObstaclePosition> cObstaclePoses)
+void AvoidControl::AvoidWalkControl(RobPose cTargetPos, RobPose cRobotPos, vector<ObsPose> cObstaclePoses)
 {
     memset(&avoidWalkParam, 0, sizeof(avoidWalkParam));
     double robotWalkDirection[14];
@@ -60,13 +60,13 @@ void AvoidControl::AvoidWalkControl(Pose cTargetPos, Pose cRobotPos, vector<Obst
         robotWalkDirection[i] = i*15*M_PI/180;
     }
 
-    if((cTargetPos.X - cRobotPos.X) < 0.001)
+    if((cTargetPos.x - cRobotPos.x) < 0.001)
     {
         robotWalkDirection[13] = M_PI/2;
     }
     else
     {
-        robotWalkDirection[13] = atan((cTargetPos.Y - cRobotPos.Y)/(cTargetPos.X - cRobotPos.X));
+        robotWalkDirection[13] = atan((cTargetPos.y - cRobotPos.y)/(cTargetPos.y - cRobotPos.y));
     }
     for(int i = 0; i < 14; i++)
     {
@@ -81,25 +81,25 @@ void AvoidControl::AvoidWalkControl(Pose cTargetPos, Pose cRobotPos, vector<Obst
 
     for(int i = 0; i < 14; i++)
     {
-        Pose tempRobotPos = cRobotPos;
+        RobPose tempRobotPos = cRobotPos;
         costFunction[i] = 1/(1 + robotWalkVector[i][0]*robotWalkVector[13][0] + robotWalkVector[i][1]*robotWalkVector[13][1]);
 
         for(int j = 0; j < robotwalkStepNum; j++)
         {
             if(j == 0)
             {
-                tempRobotPos.X = tempRobotPos.X + 0.5*robotWalkStepLength[i]*robotWalkVector[i][0];
-                tempRobotPos.Y = tempRobotPos.Y + 0.5*robotWalkStepLength[i]*robotWalkVector[i][1];
+                tempRobotPos.x = tempRobotPos.x + 0.5*robotWalkStepLength[i]*robotWalkVector[i][0];
+                tempRobotPos.y = tempRobotPos.y + 0.5*robotWalkStepLength[i]*robotWalkVector[i][1];
             }
             else
             {
-                tempRobotPos.X = tempRobotPos.X + robotWalkStepLength[i]*robotWalkVector[i][0];
-                tempRobotPos.Y = tempRobotPos.Y + robotWalkStepLength[i]*robotWalkVector[i][1];
+                tempRobotPos.x = tempRobotPos.x + robotWalkStepLength[i]*robotWalkVector[i][0];
+                tempRobotPos.y = tempRobotPos.y + robotWalkStepLength[i]*robotWalkVector[i][1];
             }
 
             if (cObstaclePoses.size() > 0)
             {
-                for(vector<ObstaclePosition>::iterator obsIter = cObstaclePoses.begin(); obsIter != cObstaclePoses.end(); obsIter++ )
+                for(vector<ObsPose>::iterator obsIter = cObstaclePoses.begin(); obsIter != cObstaclePoses.end(); obsIter++ )
                 {
                     costFunction[i] = costFunction[i] + PenaltyParameter(tempRobotPos, *obsIter);
                 }

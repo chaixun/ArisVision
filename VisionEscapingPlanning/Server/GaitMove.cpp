@@ -82,7 +82,7 @@ int EscapingGaitWrapper::escapingGait(aris::dynamic::Model &model, const aris::d
 
     if(escapingPlanner.GetPlannerState() == EscapingPlanner::GENBODYANDFOOTFINISHED)
     {
-      //  cout<<"Generate Finished"<<endl;
+        rt_printf("Generate Finished \n");
     }
 
     escapingPlanner.OutBodyandFeetTraj(bodyPose, feetPosi, timeNow);
@@ -98,7 +98,7 @@ int EscapingGaitWrapper::escapingGait(aris::dynamic::Model &model, const aris::d
     //rt_printf("%f\n", bodyPose[2]);
     //cout<<bodyPose[0]<<" "<<bodyPose[1]<<" "<<bodyPose[2]<<" "<<bodyPose[3]<<" "<<bodyPose[4]<<" "<<bodyPose[5]<<endl;
 
-    double bodyPose1[6] = {0};
+    //    double bodyPose1[6] = {0};
 
     robot.SetPeb(bodyPose, beginMak);
     robot.SetPee(feetPosi, beginMak);

@@ -98,7 +98,7 @@ void EscapingPlanner::SelMidPoint()
 void EscapingPlanner::GenEscapPath()
 {
     //reverse target to start
-    double theta = -M_PI/2 + robPoses.back().alpha;
+    double theta = -M_PI/2 + robPoses.back().gama;
     double deltaX = robPoses.back().x;
     double deltaY = robPoses.back().y;
 
