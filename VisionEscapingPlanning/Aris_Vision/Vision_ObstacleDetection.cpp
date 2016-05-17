@@ -160,7 +160,7 @@ void FindObstacle(vector<int>& stRun, vector<int>& enRun, vector<int>& rowRun, i
         int obsArea = 0;
         for(int i = 0; i < row.size(); i++)
         {
-           obsArea = obsArea + end.at(i) - start.at(i) + 1;
+            obsArea = obsArea + end.at(i) - start.at(i) + 1;
         }
 
         if (row.size()> 5&&fabs(left - right) > 0.125 && obsArea > 25)
@@ -170,14 +170,17 @@ void FindObstacle(vector<int>& stRun, vector<int>& enRun, vector<int>& rowRun, i
             tempObsPos.y = (down + up)/2;
             tempObsPos.r = sqrt(pow((right - left)/2, 2) + pow((up - down)/2, 2));
 
-            ObsPose obsGCS;
-            obsGCS.x = tempObsPos.x*cos(cRobotPos.gama) - tempObsPos.y*sin(cRobotPos.gama) + cRobotPos.x;
-            obsGCS.y = tempObsPos.x*sin(cRobotPos.gama) + tempObsPos.y*cos(cRobotPos.gama) + cRobotPos.y;
-            obsGCS.r = tempObsPos.r;
+            if(tempObsPos.y < 0.5)
+            {
+                ObsPose obsGCS;
+                obsGCS.x = tempObsPos.x*cos(cRobotPos.gama) - tempObsPos.y*sin(cRobotPos.gama) + cRobotPos.x;
+                obsGCS.y = tempObsPos.x*sin(cRobotPos.gama) + tempObsPos.y*cos(cRobotPos.gama) + cRobotPos.y;
+                obsGCS.r = tempObsPos.r;
 
-            obsPos.push_back(obsGCS);
+                obsPos.push_back(obsGCS);
 
-            obsNum = obsNum + 1;
+                obsNum = obsNum + 1;
+            }
         }
     }
 }

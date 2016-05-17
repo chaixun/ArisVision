@@ -46,26 +46,26 @@ int main(int argc, char *argv[])
 //    robPoses.push_back(startPose);
 //    robPoses.push_back(targetPose);
 
-    double realLeftObs[3][3] = {{-1, 2, 0.25}, {-1, 4, 0.25}};
-    double realRightObs[2][3] = {{1, 2, 0.25}, {1, 4, 0.55}};
+//    double realLeftObs[3][3] = {{-1, 2, 0.25}, {-1, 4, 0.25}};
+//    double realRightObs[2][3] = {{1, 2, 0.25}, {1, 4, 0.55}};
 
-    for(int i = 0; i < 2; i++)
-    {
-        ObsPose tempObs;
-        tempObs.x = realLeftObs[i][0];
-        tempObs.y = realLeftObs[i][1];
-        tempObs.r = realLeftObs[i][2];
-        lObsPoses.push_back(tempObs);
-    }
+//    for(int i = 0; i < 2; i++)
+//    {
+//        ObsPose tempObs;
+//        tempObs.x = realLeftObs[i][0];
+//        tempObs.y = realLeftObs[i][1];
+//        tempObs.r = realLeftObs[i][2];
+//        lObsPoses.push_back(tempObs);
+//    }
 
-    for(int i = 0; i < 2; i++)
-    {
-        ObsPose tempObs;
-        tempObs.x = realRightObs[i][0];
-        tempObs.y = realRightObs[i][1];
-        tempObs.r = realRightObs[i][2];
-        rObsPoses.push_back(tempObs);
-    }
+//    for(int i = 0; i < 2; i++)
+//    {
+//        ObsPose tempObs;
+//        tempObs.x = realRightObs[i][0];
+//        tempObs.y = realRightObs[i][1];
+//        tempObs.r = realRightObs[i][2];
+//        rObsPoses.push_back(tempObs);
+//    }
 
     std::string xml_address;
 
