@@ -136,7 +136,7 @@ void EscapingPlanner::GenEscapPath()
         //cout<<curveX[i]<<" "<<curveY[i]<<endl;
     }
 
-    splinePath.set_boundary(tk::spline::bd_type::first_deriv, 0, tk::spline::bd_type::first_deriv, -robPoses.back().alpha, false);
+    splinePath.set_boundary(tk::spline::bd_type::first_deriv, 0, tk::spline::bd_type::first_deriv, -robPoses.back().gama, false);
     splinePath.set_points(curveX, curveY);
     GenBodyandFeetPose();
     //    cout<<splinePath(2)<<endl;
