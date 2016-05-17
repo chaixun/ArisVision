@@ -93,10 +93,10 @@ void EscapingPlanner::SelMidPoint()
     {
         midPoints.pop_back();
     }
-    //        for (unsigned int i = 0; i < midPoints.size(); i++)
-    //        {
-    //            cout<<midPoints[i].x<<" "<<midPoints[i].y<<endl;
-    //        }
+            for (unsigned int i = 0; i < midPoints.size(); i++)
+            {
+                cout<<midPoints[i].x<<" "<<midPoints[i].y<<endl;
+            }
 }
 
 void EscapingPlanner::GenEscapPath()

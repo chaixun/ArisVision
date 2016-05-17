@@ -31,7 +31,8 @@ void AvoidControl::AvoidWalkControl(RobPose cRobotPos, vector<ObsPose> cObstacle
             robWalkNum = 2;
             robStepLength = 0;
             robWalkAngel = 0;
-            robTurnAngel = -M_PI/6;
+           // robTurnAngel = -M_PI/6;
+            robTurnAngel = -20*M_PI/180;
 
             lObsPoses.push_back(currentObs);
 
@@ -51,13 +52,15 @@ void AvoidControl::AvoidWalkControl(RobPose cRobotPos, vector<ObsPose> cObstacle
             {
                 /*not the same obstacle turn right or left 90*/
                 currentObs = cObstaclePoses.back();
-                robWalkNum = 3;
+               // robWalkNum = 3;
+                robWalkNum = 2;
                 if(rightTurn)
                 {
                     /*turn right*/
                     robStepLength = 0;
                     robWalkAngel = 0;
-                    robTurnAngel = -36*M_PI/180;
+                   // robTurnAngel = -36*M_PI/180;
+                    robTurnAngel = -40*M_PI/180;
                     rightTurn = !rightTurn;
 
                     lObsPoses.push_back(currentObs);
@@ -67,7 +70,8 @@ void AvoidControl::AvoidWalkControl(RobPose cRobotPos, vector<ObsPose> cObstacle
                     /*turn left*/
                     robStepLength = 0;
                     robWalkAngel = 0;
-                    robTurnAngel = 36*M_PI/180;
+                 //   robTurnAngel = 36*M_PI/180;
+                   robTurnAngel = 40*M_PI/180;
                     rightTurn = !rightTurn;
 
                     rObsPoses.push_back(currentObs);

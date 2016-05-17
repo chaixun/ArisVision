@@ -170,8 +170,6 @@ void FindObstacle(vector<int>& stRun, vector<int>& enRun, vector<int>& rowRun, i
             tempObsPos.y = (down + up)/2;
             tempObsPos.r = sqrt(pow((right - left)/2, 2) + pow((up - down)/2, 2));
 
-            if(tempObsPos.y < 0.5)
-            {
                 ObsPose obsGCS;
                 obsGCS.x = tempObsPos.x*cos(cRobotPos.gama) - tempObsPos.y*sin(cRobotPos.gama) + cRobotPos.x;
                 obsGCS.y = tempObsPos.x*sin(cRobotPos.gama) + tempObsPos.y*cos(cRobotPos.gama) + cRobotPos.y;
@@ -180,7 +178,6 @@ void FindObstacle(vector<int>& stRun, vector<int>& enRun, vector<int>& rowRun, i
                 obsPos.push_back(obsGCS);
 
                 obsNum = obsNum + 1;
-            }
         }
     }
 }
