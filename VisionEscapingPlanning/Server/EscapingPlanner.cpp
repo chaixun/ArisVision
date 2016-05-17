@@ -89,10 +89,14 @@ void EscapingPlanner::SelMidPoint()
         GetMidPoint(lObsPoses[lObsNum - 1], rObsPoses[rObsNum - 1], tempPoint);
         midPoints[2 * pairObsNum - 1] = tempPoint;
     }
-    //    for (unsigned int i = 0; i < midPoints.size(); i++)
-    //    {
-    //        cout<<midPoints[i].x<<" "<<midPoints[i].y<<endl;
-    //    }
+    else
+    {
+        midPoints.pop_back();
+    }
+    //        for (unsigned int i = 0; i < midPoints.size(); i++)
+    //        {
+    //            cout<<midPoints[i].x<<" "<<midPoints[i].y<<endl;
+    //        }
 }
 
 void EscapingPlanner::GenEscapPath()
@@ -253,7 +257,7 @@ void EscapingPlanner::OutFeetPosi()
 void EscapingPlanner::OutFeetTraj(FootHold feetHold1, FootHold feetHold2, double feetTrajPosi[18], double timeCount)
 {
 
-        const double s = -(M_PI / 2)*cos(M_PI * (timeCount + 1) / halfStepT) + M_PI / 2;
+    const double s = -(M_PI / 2)*cos(M_PI * (timeCount + 1) / halfStepT) + M_PI / 2;
     //    const double s = M_PI * timeCount / halfStepT;
     //    cout<<s<<endl;
     //    cout<<feetHold1.feetHold[0]<<" "<<feetHold2.feetHold[0]<<" LF"<<endl;
@@ -331,7 +335,7 @@ int EscapingPlanner::OutBodyandFeetTraj(double bodyPose[6], double feetPosi[18],
             cbodyPose[1] = y;
             cbodyPose[3] = alpha;
             OutFeetTraj(feetPoses[numCycle], feetPoses[numCycle + 1], cFeetPosi, iInCycle);
-           // cout<<"ending "<<endl;
+            // cout<<"ending "<<endl;
         }
 
         for(int i = 0; i < 6; i++)

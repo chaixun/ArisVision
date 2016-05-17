@@ -3,7 +3,6 @@
 
 #include "Vision_ObstacleDetection.h"
 #include "RobObsPose.h"
-//#include "GaitMove.h"
 #include <math.h>
 
 using namespace RobObsPose;

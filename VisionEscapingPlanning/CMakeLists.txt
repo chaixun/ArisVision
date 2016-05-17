@@ -114,7 +114,7 @@ PREPEND(FULL_SRC Server ${SOURCE_FILES})
 set(VISION_SOURCE_FILES Aris_Vision.cpp Vision_Terrain0.cpp Vision_Gait0.cpp Vision_ObstacleDetection.cpp Vision_AvoidControl.cpp RobObsPose.cpp)
 PREPEND(VISION_FULL_SRC Aris_Vision ${VISION_SOURCE_FILES})
 
-add_executable(Server ${VISION_FULL_SRC} ${FULL_SRC} Server/GaitMove.cpp)
+add_executable(Server ${VISION_FULL_SRC} ${FULL_SRC})
 target_link_libraries(Server ${ALL_LINK_LIB})
 
 ################################### build client ####################################

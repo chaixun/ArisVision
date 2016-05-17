@@ -43,7 +43,7 @@ void VisionAvoidWrapper::KinectStart()
 
             // terrainAnalysisResult.TerrainAnalyze(visiondata.get().gridMap, visiondata.get().pointCloud);
 
-            cout<<"Curr Robot Pos: x:"<<robPoses.back().x<<" y:"<<robPoses.back().y<<" alpha:"<<robPoses.back().gama<<endl;
+            cout<<"Curr Robot Pos: x:"<<robPoses.back().x<<" y:"<<robPoses.back().y<<" gama:"<<robPoses.back().gama<<endl;
 
             obstacleDetectionResult.ObstacleDetecting(visiondata.get().obstacleMap, robPoses.back());
 
@@ -83,22 +83,22 @@ void VisionAvoidWrapper::KinectStart()
 
             if(visionWalkParam.walkNum == 1)
             {
-                visionWalkParam.totalCount = 1200;
+                visionWalkParam.totalCount = 1500;
             }
             else
             {
-                visionWalkParam.totalCount = 2400*(visionWalkParam.walkNum - 0.5);
+                visionWalkParam.totalCount = 3000*(visionWalkParam.walkNum - 0.5);
             }
 
             if(visionWalkParam.turndata != 0)
             {
                 if(visionWalkParam.walkNum == 1)
                 {
-                    visionWalkParam.totalCount = 2000;
+                    visionWalkParam.totalCount = 1500;
                 }
                 else
                 {
-                    visionWalkParam.totalCount = 4000*(visionWalkParam.walkNum - 0.5);
+                    visionWalkParam.totalCount = 3000*(visionWalkParam.walkNum - 0.5);
                 }
             }
 

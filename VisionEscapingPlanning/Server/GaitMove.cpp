@@ -82,7 +82,7 @@ int EscapingGaitWrapper::escapingGait(aris::dynamic::Model &model, const aris::d
 
     if(escapingPlanner.GetPlannerState() == EscapingPlanner::GENBODYANDFOOTFINISHED)
     {
-        rt_printf("Generate Finished \n");
+        //rt_printf("Generate Finished \n");
     }
 
     escapingPlanner.OutBodyandFeetTraj(bodyPose, feetPosi, timeNow);

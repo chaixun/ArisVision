@@ -1,6 +1,6 @@
 #include "Vision_AvoidControl.h"
 
-ObsPose AvoidControl::currentObs;
+ObsPose AvoidControl::currentObs = {-100, -100, -100, -100};
 bool AvoidControl::rightTurn = false;
 double AvoidControl::WalkAngel = M_PI/2;
 
@@ -23,7 +23,7 @@ void AvoidControl::AvoidWalkControl(RobPose cRobotPos, vector<ObsPose> cObstacle
     }
     else
     {
-        if(cObstaclePoses.size() == 1)
+        if(cObstaclePoses.size() == 1 && currentObs.x == -100)
         {
             /*first obstacle turn right*/
             currentObs = cObstaclePoses.back();

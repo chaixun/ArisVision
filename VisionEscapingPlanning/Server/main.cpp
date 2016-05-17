@@ -26,24 +26,30 @@ int main(int argc, char *argv[])
 {   
     VisionAvoid::VisionAvoidWrapper::KinectStart();
 
-    robPoses.clear();
+//    robPoses.clear();
 
-    RobPose startPose = {-1, 0, 0, 0, 0, 0};
-    RobPose targetPose = {0, 11, 0, 0, 0, 0};
+//        RobPose startPose = {-1, 0, 0, 0, 0, 0};
+//        RobPose targetPose = {0, 11, 0, 0, 0, 0};
 
-    double realLeftObs[4][3] = {{-1, 3, 0.5}, {-1, 6, 0.25}, {-1, 8, 0.25}, {-1, 10, 0.25}};
-    double realRightObs[3][3] = {{2, 3, 0.25}, {2, 6, 0.25}, {2, 9, 0.5}};
+//        double realLeftObs[4][3] = {{-1, 3, 0.5}, {-1, 6, 0.25}, {-1, 8, 0.25}, {-1, 10, 0.25}};
+//        double realRightObs[3][3] = {{2, 3, 0.25}, {2, 6, 0.25}, {2, 9, 0.5}};
 
-    //    RobPose startPose = {0, 0, 0, 0, 0, 0};
-    //    RobPose targetPose = {0, 11, 0, 0, 0, 0};
+//        RobPose startPose = {0, 0, 0, 0, 0, 0};
+//        RobPose targetPose = {0, 11, 0, 0, 0, 0};
 
-    //    double realLeftObs[4][3] = {{-1, 3, 0.25}, {-1, 6, 0.25}, {-1, 8, 0.25}, {-1, 10, 0.25}};
-    //    double realRightObs[3][3] = {{1, 3, 0.25}, {1, 6, 0.25}, {1, 9, 0.25}};
+//        double realLeftObs[4][3] = {{-1, 3, 0.25}, {-1, 6, 0.25}, {-1, 8, 0.25}, {-1, 10, 0.25}};
+//        double realRightObs[3][3] = {{1, 3, 0.25}, {1, 6, 0.25}, {1, 9, 0.25}};
 
-    robPoses.push_back(startPose);
-    robPoses.push_back(targetPose);
+//    RobPose startPose = {0, 0, 0, 0, 0, 0};
+//    RobPose targetPose = {0, 5, 0, 0, 0, 0};
 
-    for(int i = 0; i < 4; i++)
+//    robPoses.push_back(startPose);
+//    robPoses.push_back(targetPose);
+
+    double realLeftObs[3][3] = {{-1, 2, 0.25}, {-1, 4, 0.25}};
+    double realRightObs[2][3] = {{1, 2, 0.25}, {1, 4, 0.55}};
+
+    for(int i = 0; i < 2; i++)
     {
         ObsPose tempObs;
         tempObs.x = realLeftObs[i][0];
@@ -52,7 +58,7 @@ int main(int argc, char *argv[])
         lObsPoses.push_back(tempObs);
     }
 
-    for(int i = 0; i < 3; i++)
+    for(int i = 0; i < 2; i++)
     {
         ObsPose tempObs;
         tempObs.x = realRightObs[i][0];

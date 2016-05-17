@@ -9,7 +9,6 @@
 #include "Vision_Gait0.h"
 #include "Vision_Terrain0.h"
 #include "Vision_AvoidControl.h"
-#include "Vision_RobotPos.h"
 #include "RobObsPose.h"
 
 using namespace aris::core;
