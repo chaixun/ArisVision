@@ -95,8 +95,8 @@ int EscapingGaitWrapper::escapingGait(aris::dynamic::Model &model, const aris::d
 
     //    cout<<beginPee[0]<<" "<<beginPee[1]<<" "<<beginPee[2]<<" "<<beginPee[3]<<" "<<beginPee[4]<<" "<<beginPee[5]<<" SY"<<endl;
     //    cout<<feetPosi[0]<<" "<<feetPosi[1]<<" "<<feetPosi[2]<<" "<<feetPosi[3]<<" "<<feetPosi[4]<<" "<<feetPosi[5]<<" Me"<<endl;
-    //rt_printf("%f\n", bodyPose[2]);
-    //cout<<bodyPose[0]<<" "<<bodyPose[1]<<" "<<bodyPose[2]<<" "<<bodyPose[3]<<" "<<bodyPose[4]<<" "<<bodyPose[5]<<endl;
+     rt_printf("%f\n", bodyPose[2]);
+    // cout<<bodyPose[0]<<" "<<bodyPose[1]<<" "<<bodyPose[2]<<" "<<bodyPose[3]<<" "<<bodyPose[4]<<" "<<bodyPose[5]<<endl;
 
     //    double bodyPose1[6] = {0};
 
