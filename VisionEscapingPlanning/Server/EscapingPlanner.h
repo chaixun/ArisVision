@@ -16,7 +16,6 @@ using namespace RobObsPose;
 class EscapingPlanner
 {
 public:
-
     struct Point2D
     {
         double x;

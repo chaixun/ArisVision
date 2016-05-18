@@ -22,6 +22,7 @@ public:
     static ObsPose currentObs;
     static double WalkAngel;
     static bool rightTurn;
+    static bool firstTurnLeft;
     SimpleWalkParam avoidWalkParam;
     AvoidControl(){}
     ~AvoidControl(){}
