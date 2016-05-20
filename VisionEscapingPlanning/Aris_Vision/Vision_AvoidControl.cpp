@@ -23,7 +23,6 @@ void AvoidControl::AvoidWalkControl(RobPose cRobotPos, vector<ObsPose> cObstacle
         robTurnAngel = 20*M_PI/180;
 
         WalkAngel += (0.5 + robWalkNum - 1) * robTurnAngel;
-
         firstTurnLeft = false;
     }
     else

@@ -53,7 +53,7 @@ private:
     vector<FootHold> feetPoses;
     vector<double> curveX;
     vector<double> curveY;
-    int halfStepT = 3000;
+    int halfStepT = 2500;
     int timeStart;
     int timeLast;
     bool leftSwing = false;

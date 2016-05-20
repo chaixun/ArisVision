@@ -94,11 +94,11 @@ void VisionAvoidWrapper::KinectStart()
             {
                 if(visionWalkParam.walkNum == 1)
                 {
-                    visionWalkParam.totalCount = 1000;
+                    visionWalkParam.totalCount = 800;
                 }
                 else
                 {
-                    visionWalkParam.totalCount = 2000*(visionWalkParam.walkNum - 0.5);
+                    visionWalkParam.totalCount = 1600*(visionWalkParam.walkNum - 0.5);
                 }
             }
 
