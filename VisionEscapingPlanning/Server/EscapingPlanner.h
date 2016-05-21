@@ -46,14 +46,21 @@ private:
     vector<Point2D> midPoints;
     vector<ObsPose> traLObsPoses;
     vector<ObsPose> traRObsPoses;
-    double halfStep = 0.2;
+    double halfStep = 0.3;
     double difXTraj = 0.045;
     vector<RobPose> bodyPoses;
+
+    double bodySpeed = 0.15;
+
+    double bodyalpha0 = 0;
+    double bodyalpha1 = 0;
+    double bodyX;
+    double bodyY;
 
     vector<FootHold> feetPoses;
     vector<double> curveX;
     vector<double> curveY;
-    int halfStepT = 2500;
+    int halfStepT = 4000;
     int timeStart;
     int timeLast;
     bool leftSwing = false;

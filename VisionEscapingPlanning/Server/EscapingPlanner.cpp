@@ -136,6 +136,8 @@ void EscapingPlanner::GenEscapPath()
         //cout<<curveX[i]<<" "<<curveY[i]<<endl;
     }
 
+   // start slope 0, target slope 0 or -robPoses.back().gama
+
     splinePath.set_boundary(tk::spline::bd_type::first_deriv, 0, tk::spline::bd_type::first_deriv, -robPoses.back().gama, false);
     splinePath.set_points(curveX, curveY);
     GenBodyandFeetPose();
@@ -272,9 +274,9 @@ void EscapingPlanner::OutFeetTraj(FootHold feetHold1, FootHold feetHold2, double
         if(foot1.x != foot2.x)
         {
             Point2D difFoot = {foot2.x - foot1.x, foot2.y - foot1.y};
-            double ellipL = sqrt(difFoot.x*difFoot.x + difFoot.y*difFoot.y);
+            double ellipL = sqrt(difFoot.x * difFoot.x + difFoot.y * difFoot.y);
             double ellipH = 0.04;
-            double theta = atan(difFoot.y / difFoot.x);
+            double theta = atan2(difFoot.y, difFoot.x);
             double x = foot1.x + (ellipL / 2 - ellipL / 2 * cos(s)) * cos(theta);
             double y = foot1.y + (ellipL / 2 - ellipL / 2 * cos(s)) * sin(theta);
             double z = ellipH * sin(s);
@@ -308,32 +310,38 @@ int EscapingPlanner::OutBodyandFeetTraj(double bodyPose[6], double feetPosi[18],
 
         if(timeNow - timeStart <= halfStepT)
         {
-            double x = bodyPoses[numCycle].x + acc_even(halfStepT, iInCycle + 1) * (bodyPoses[numCycle + 1].x - bodyPoses[numCycle].x);
-            double y = splinePath(x);
-            double alpha = splinePath.getSlope(x);
-            cbodyPose[0] = x;
-            cbodyPose[1] = y;
-            cbodyPose[3] = alpha;
+            bodyalpha0 = splinePath.getSlope(bodyX);
+            bodyX += double(iInCycle/halfStepT) * bodySpeed * cos(atan(bodyalpha0)) * 0.001;
+            bodyY += double(iInCycle/halfStepT) * bodySpeed * sin(atan(bodyalpha0)) * 0.001;
+            bodyalpha1 = splinePath.getSlope(bodyX);
+
+            cbodyPose[0] = bodyX;
+            cbodyPose[1] = bodyY;
+            cbodyPose[3] = bodyalpha1;
             OutFeetTraj(feetPoses[numCycle], feetPoses[numCycle + 1], cFeetPosi, iInCycle);
         }
         else if(timeNow - timeStart <= (bodyPoses.size() - 2) * halfStepT)
         {
-            double x = bodyPoses[numCycle].x + even(halfStepT, iInCycle + 1) * (bodyPoses[numCycle + 1].x - bodyPoses[numCycle].x);
-            double y = splinePath(x);
-            double alpha = splinePath.getSlope(x);
-            cbodyPose[0] = x;
-            cbodyPose[1] = y;
-            cbodyPose[3] = alpha;
+            bodyalpha0 = splinePath.getSlope(bodyX);
+            bodyX += bodySpeed * cos(atan(bodyalpha0)) * 0.001;
+            bodyY += bodySpeed * sin(atan(bodyalpha0)) * 0.001;
+            bodyalpha1 = splinePath.getSlope(bodyX);
+
+            cbodyPose[0] = bodyX;
+            cbodyPose[1] = bodyY;
+            cbodyPose[3] = bodyalpha1;
             OutFeetTraj(feetPoses[numCycle], feetPoses[numCycle + 1], cFeetPosi, iInCycle);
         }
         else if(timeNow - timeStart <= (bodyPoses.size() - 1) * halfStepT)
         {
-            double x = bodyPoses[numCycle].x + dec_even(halfStepT, iInCycle + 1) * (bodyPoses[numCycle + 1].x - bodyPoses[numCycle].x);
-            double y = splinePath(x);
-            double alpha = splinePath.getSlope(x);
-            cbodyPose[0] = x;
-            cbodyPose[1] = y;
-            cbodyPose[3] = alpha;
+            bodyalpha0 = splinePath.getSlope(bodyX);
+            bodyX += (1 - iInCycle / halfStepT) * bodySpeed * cos(atan(bodyalpha0)) * 0.001;
+            bodyY += (1 - iInCycle / halfStepT) * bodySpeed * sin(atan(bodyalpha0)) * 0.001;
+            bodyalpha1 = splinePath.getSlope(bodyX);
+
+            cbodyPose[0] = bodyX;
+            cbodyPose[1] = bodyY;
+            cbodyPose[3] = bodyalpha1;
             OutFeetTraj(feetPoses[numCycle], feetPoses[numCycle + 1], cFeetPosi, iInCycle);
             // cout<<"ending "<<endl;
         }
