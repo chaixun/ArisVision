@@ -54,8 +54,8 @@ private:
 
     double bodyalpha0 = 0;
     double bodyalpha1 = 0;
-    double bodyX;
-    double bodyY;
+    double bodyX = 0;
+    double bodyY = 0;
 
     vector<FootHold> feetPoses;
     vector<double> curveX;
