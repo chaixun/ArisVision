@@ -75,11 +75,11 @@ void EscapingPlanner::SelMidPoint()
                 + sqrt(pow((point2.x - midPoints[(i + 1) * 2].x), 2) + pow((point2.y - midPoints[(i + 1) * 2].y), 2));
         if (dist1 >= dist2)
         {
-            midPoints[i * 2 + 1] = point2;
+            midPoints[i * 2 + 1] = point1;
         }
         else
         {
-            midPoints[i * 2 + 1] = point1;
+            midPoints[i * 2 + 1] = point2;
         }
     }
 
@@ -93,10 +93,10 @@ void EscapingPlanner::SelMidPoint()
     {
         midPoints.pop_back();
     }
-            for (unsigned int i = 0; i < midPoints.size(); i++)
-            {
-                cout<<midPoints[i].x<<" "<<midPoints[i].y<<endl;
-            }
+    for (unsigned int i = 0; i < midPoints.size(); i++)
+    {
+        cout<<midPoints[i].x<<" "<<midPoints[i].y<<endl;
+    }
 }
 
 void EscapingPlanner::GenEscapPath()
@@ -126,23 +126,37 @@ void EscapingPlanner::GenEscapPath()
 
     for (unsigned int i = 0; i < curveX.size(); i++)
     {
-        double tempX = cos(theta) * curveX[i] + sin(theta) * curveY[i] + (-deltaX*cos(theta) - deltaY*sin(theta));
-        double tempY = -sin(theta) * curveX[i] + cos(theta) * curveY[i] + (deltaX*sin(theta) - deltaY*cos(theta));
+        //        double tempX = cos(theta) * curveX[i] + sin(theta) * curveY[i] + (-deltaX*cos(theta) - deltaY*sin(theta));
+        //        double tempY = -sin(theta) * curveX[i] + cos(theta) * curveY[i] + (deltaX*sin(theta) - deltaY*cos(theta));
+        //        curveX[i] = tempX;
+        //        curveY[i] = tempY;
+
+
+        Eigen::Matrix3d T1;
+        T1<< cos(theta), -sin(theta), deltaX,
+                sin(theta), cos(theta), deltaY,
+                0, 0, 1;
+        Eigen::Matrix3d T2 = T1.inverse();
+
+        double tempX = T2(0, 0) * curveX[i] + T2(0, 1) * curveY[i] + 1 * T2(0, 2);
+        double tempY = T2(1, 0) * curveX[i] + T2(1, 1) * curveY[i] + 1 * T2(1, 2);
+
         curveX[i] = tempX;
         curveY[i] = tempY;
 
-        //cout<<cos(theta)<<" "<<sin(theta)<<" "<<(-deltaX*cos(theta) - deltaY*sin(theta))<<endl;
-        //cout<<-sin(theta)<<" "<<cos(theta)<<" "<<(deltaX*sin(theta) - deltaY*cos(theta))<<endl;
-        //cout<<curveX[i]<<" "<<curveY[i]<<endl;
+        //        cout<<deltaX<<" "<<deltaY<<endl;
+        //        cout<<theta/M_PI*180<<" "<<cos(theta)<<" "<<sin(theta)<<" "<<(-deltaX*cos(theta) - deltaY*sin(theta))<<endl;
+        //        cout<<-sin(theta)<<" "<<cos(theta)<<" "<<(deltaX*sin(theta) - deltaY*cos(theta))<<endl;
+        cout<<curveX[i]<<" "<<curveY[i]<<endl;
     }
 
-   // start slope 0, target slope 0 or -robPoses.back().gama
+    // start slope 0, target slope 0 or -robPoses.back().gama
 
     splinePath.set_boundary(tk::spline::bd_type::first_deriv, 0, tk::spline::bd_type::first_deriv, -robPoses.back().gama, false);
     splinePath.set_points(curveX, curveY);
     GenBodyandFeetPose();
-    //    cout<<splinePath(2)<<endl;
-    //    cout<<splinePath.getSlope(2)<<endl;
+    //        cout<<splinePath(0.3)<<endl;
+    //        cout<<splinePath.getSlope(0.3)<<endl;
 }
 
 void EscapingPlanner::GenBodyandFeetPose()
@@ -302,6 +316,8 @@ int EscapingPlanner::OutBodyandFeetTraj(double bodyPose[6], double feetPosi[18],
 {
     if(plannerState == GAITSTART)
     {
+        double bodySpeed = halfStep / (halfStepT/1000);
+
         double cbodyPose[6] = {0};
         double cFeetPosi[18] = {0};
 
@@ -310,21 +326,33 @@ int EscapingPlanner::OutBodyandFeetTraj(double bodyPose[6], double feetPosi[18],
 
         if(timeNow - timeStart <= halfStepT)
         {
-            bodyalpha0 = splinePath.getSlope(bodyX);
-            bodyX += double(iInCycle/halfStepT) * bodySpeed * cos(atan(bodyalpha0)) * 0.001;
-            bodyY += double(iInCycle/halfStepT) * bodySpeed * sin(atan(bodyalpha0)) * 0.001;
+            //            bodyalpha0 = splinePath.getSlope(bodyX);
+
+            //            bodyX += double(iInCycle) / halfStepT * bodySpeed * cos(atan(bodyalpha0)) * 0.001;
+            //            //bodyY += double(iInCycle) / halfStepT * bodySpeed * sin(atan(bodyalpha0)) * 0.001;
+            //            bodyY = splinePath(bodyX);
+            //            bodyalpha1 = splinePath.getSlope(bodyX);
+            bodyX = bodyPoses[numCycle].x + acc_even(halfStepT, iInCycle) * (bodyPoses[numCycle + 1].x - bodyPoses[numCycle].x);
+            bodyY = splinePath(bodyX);
             bodyalpha1 = splinePath.getSlope(bodyX);
 
             cbodyPose[0] = bodyX;
             cbodyPose[1] = bodyY;
             cbodyPose[3] = bodyalpha1;
             OutFeetTraj(feetPoses[numCycle], feetPoses[numCycle + 1], cFeetPosi, iInCycle);
+
+            //cout<<bodyX<<" "<<bodyalpha0<<" "<<atan(bodyalpha0)<<" "<<sin(atan(bodyalpha0))<<endl;
         }
         else if(timeNow - timeStart <= (bodyPoses.size() - 2) * halfStepT)
         {
-            bodyalpha0 = splinePath.getSlope(bodyX);
-            bodyX += bodySpeed * cos(atan(bodyalpha0)) * 0.001;
-            bodyY += bodySpeed * sin(atan(bodyalpha0)) * 0.001;
+            //            bodyalpha0 = splinePath.getSlope(bodyX);
+            //            bodyX += bodySpeed * cos(atan(bodyalpha0)) * 0.001;
+            //            //bodyY += bodySpeed * sin(atan(bodyalpha0)) * 0.001;
+            //            bodyY = splinePath(bodyX);
+            //            bodyalpha1 = splinePath.getSlope(bodyX);
+
+            bodyX += bodySpeed/sqrt(1 + pow(splinePath.getSlope(bodyX), 2))*0.001;
+            bodyY = splinePath(bodyX);
             bodyalpha1 = splinePath.getSlope(bodyX);
 
             cbodyPose[0] = bodyX;
@@ -334,9 +362,14 @@ int EscapingPlanner::OutBodyandFeetTraj(double bodyPose[6], double feetPosi[18],
         }
         else if(timeNow - timeStart <= (bodyPoses.size() - 1) * halfStepT)
         {
-            bodyalpha0 = splinePath.getSlope(bodyX);
-            bodyX += (1 - iInCycle / halfStepT) * bodySpeed * cos(atan(bodyalpha0)) * 0.001;
-            bodyY += (1 - iInCycle / halfStepT) * bodySpeed * sin(atan(bodyalpha0)) * 0.001;
+            //            bodyalpha0 = splinePath.getSlope(bodyX);
+            //            bodyX += (1 - double(iInCycle) / halfStepT) * bodySpeed * cos(atan(bodyalpha0)) * 0.001;
+            //            // bodyY += (1 - double(iInCycle) / halfStepT) * bodySpeed * sin(atan(bodyalpha0)) * 0.001;
+            //            bodyY = splinePath(bodyX);
+            //            bodyalpha1 = splinePath.getSlope(bodyX);
+
+            bodyX += bodySpeed/sqrt(1 + pow(splinePath.getSlope(bodyX), 2))*0.001;
+            bodyY = splinePath(bodyX);
             bodyalpha1 = splinePath.getSlope(bodyX);
 
             cbodyPose[0] = bodyX;

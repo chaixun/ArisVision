@@ -6,6 +6,7 @@
 #include "Spline.h"
 #include "RobObsPose.h"
 #include "Eigen/Dense"
+#include "Eigen/LU"
 
 using namespace std;
 
@@ -46,21 +47,19 @@ private:
     vector<Point2D> midPoints;
     vector<ObsPose> traLObsPoses;
     vector<ObsPose> traRObsPoses;
-    double halfStep = 0.3;
+    double halfStep = 0.2;
     double difXTraj = 0.045;
     vector<RobPose> bodyPoses;
 
-    double bodySpeed = 0.15;
-
     double bodyalpha0 = 0;
     double bodyalpha1 = 0;
-    double bodyX;
-    double bodyY;
+    double bodyX = 0;
+    double bodyY = 0;
 
     vector<FootHold> feetPoses;
     vector<double> curveX;
     vector<double> curveY;
-    int halfStepT = 4000;
+    int halfStepT = 2100;
     int timeStart;
     int timeLast;
     bool leftSwing = false;
