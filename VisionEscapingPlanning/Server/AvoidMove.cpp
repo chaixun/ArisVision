@@ -22,7 +22,6 @@ VisionAvoidWrapper::VisionAvoidWrapper()
 {
     ;
 }
-
 VisionAvoidWrapper::~VisionAvoidWrapper()
 {
     ;
