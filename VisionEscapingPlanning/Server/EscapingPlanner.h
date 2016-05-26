@@ -6,7 +6,6 @@
 #include "Spline.h"
 #include "RobObsPose.h"
 #include "Eigen/Dense"
-#include "Eigen/LU"
 
 using namespace std;
 
@@ -39,6 +38,7 @@ public:
     void GenEscapPath();
     void GenBodyandFeetPose();
     int OutBodyandFeetTraj(double bodyPose[6], double feetPosi[18], int timeNow);
+    int OutBodyandFeetTraj1(double bodyPose[6], double feetPosi[18], int timeNow);
     PLANNER_STATE GetPlannerState() const {return plannerState;}
 
 private:
@@ -48,7 +48,7 @@ private:
     vector<ObsPose> traLObsPoses;
     vector<ObsPose> traRObsPoses;
     double halfStep = 0.2;
-    double difXTraj = 0.045;
+    double difXTraj = 0.00001;
     vector<RobPose> bodyPoses;
 
     double bodyalpha0 = 0;
@@ -59,8 +59,8 @@ private:
     vector<FootHold> feetPoses;
     vector<double> curveX;
     vector<double> curveY;
-    int halfStepT = 2100;
-    int timeStart;
+    int halfStepT = 2000;
+    int timeStart = 0;
     int timeLast;
     bool leftSwing = false;
 
@@ -68,7 +68,8 @@ private:
     void SelMidPoint();
     void OutBodyPose();
     void OutFeetPosi();
-    void OutFeetTraj(FootHold feetHold1, FootHold feetHold2, double feetTrajPosi[18], double timeCount);
+    void OutFeetTraj1(double cBodyPose[6], double feetTrajPosi[18], int timeCount, int numCycle);
+    void OutFeetTraj(FootHold feetHold1, FootHold feetHold2, double feetTrajPosi[18], int timeCount);
 };
 
 #endif // ESCAPINGPLANNER_H

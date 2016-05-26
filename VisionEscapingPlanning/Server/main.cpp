@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
     rs.addCmd("wk", Robots::walkParse, Robots::walkGait);
     rs.addCmd("ro", Robots::resetOriginParse, Robots::resetOriginGait);
 
-    rs.addCmd("ewk", Escaping::EscapingGaitWrapper::escapingParse, Escaping::EscapingGaitWrapper::escapingGait);
+    rs.addCmd("ewk", Escaping::EscapingGaitWrapper::escapingParse, Escaping::EscapingGaitWrapper::escapingGait1);
     rs.addCmd("vwk", VisionAvoid::VisionAvoidWrapper::visionWalkParse, VisionAvoid::VisionAvoidWrapper::visionWalk);
     rs.addCmd("swk", VisionAvoid::VisionAvoidWrapper::stopVisionWalkParse, VisionAvoid::VisionAvoidWrapper::visionWalk);
 

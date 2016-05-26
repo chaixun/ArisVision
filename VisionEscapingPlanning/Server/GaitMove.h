@@ -36,6 +36,7 @@ public:
 
     static auto escapingParse(const string &cmd, const map<string, string> &param, aris::core::Msg &msg)->void;
     static auto escapingGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBase &param_in)->int;
+    static auto escapingGait1(aris::dynamic::Model &model, const aris::dynamic::PlanParamBase &param_in)->int;
 };
 
 static EscapingGaitWrapper wrapper;
