@@ -38,7 +38,7 @@ public:
     void GenEscapPath();
     void GenBodyandFeetPose();
     int OutBodyandFeetTraj(double bodyPose[6], double feetPosi[18], int timeNow);
-    int OutBodyandFeetTraj1(double bodyPose[6], double feetPosi[18], int timeNow);
+    void OutBodyandFeetTraj1(double bodyPose[6], double feetPosi[18], int timeNow);
     PLANNER_STATE GetPlannerState() const {return plannerState;}
 
 private:
@@ -47,7 +47,7 @@ private:
     vector<Point2D> midPoints;
     vector<ObsPose> traLObsPoses;
     vector<ObsPose> traRObsPoses;
-    double halfStep = 0.2;
+    double halfStep = 0.27;
     double difXTraj = 0.00001;
     vector<RobPose> bodyPoses;
 
