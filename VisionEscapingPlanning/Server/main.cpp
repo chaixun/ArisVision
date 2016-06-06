@@ -26,46 +26,34 @@ int main(int argc, char *argv[])
 {   
     VisionAvoid::VisionAvoidWrapper::KinectStart();
 
-   robPoses.clear();
+//    robPoses.clear();
 
-//        RobPose startPose = {-1, 0, 0, 0, 0, 0};
-//        RobPose targetPose = {0, 11, 0, 0, 0, 0};
+//    RobPose startPose = {0, 0, 0, 0, 0, 0};
+//    RobPose targetPose = {0.625, 4.7476, 0, 0, 0, M_PI/6};
 
-//        double realLeftObs[4][3] = {{-1, 3, 0.5}, {-1, 6, 0.25}, {-1, 8, 0.25}, {-1, 10, 0.25}};
-//        double realRightObs[3][3] = {{2, 3, 0.25}, {2, 6, 0.25}, {2, 9, 0.5}};
+//    robPoses.push_back(startPose);
+//    robPoses.push_back(targetPose);
 
-//        RobPose startPose = {0, 0, 0, 0, 0, 0};
-//        RobPose targetPose = {0, 11, 0, 0, 0, 0};
+//    double realLeftObs[3][3] = {{-0.0250001, 1.7375, 0.353774}, {-0.435825, 2.52891, 0.257694}, {-0.237949, 4.04323, 0.285318}};
+//    double realRightObs[3][3] = {{1.4408, 2.2066, 0.290743}, {1.577, 3.41446, 0.251558}, {1.5515, 4.56942, 0.313249}};
 
-//        double realLeftObs[4][3] = {{-1, 3, 0.25}, {-1, 6, 0.25}, {-1, 8, 0.25}, {-1, 10, 0.25}};
-//        double realRightObs[3][3] = {{1, 3, 0.25}, {1, 6, 0.25}, {1, 9, 0.25}};
+//    for(int i = 0; i < 3; i++)
+//    {
+//        ObsPose tempObs;
+//        tempObs.x = realLeftObs[i][0];
+//        tempObs.y = realLeftObs[i][1];
+//        tempObs.r = realLeftObs[i][2];
+//        lObsPoses.push_back(tempObs);
+//    }
 
-    RobPose startPose = {0, 0, 0, 0, 0, 0};
-    RobPose targetPose = {0.625, 4.7476, 0, 0, 0, M_PI/6};
-
-    robPoses.push_back(startPose);
-    robPoses.push_back(targetPose);
-
-    double realLeftObs[3][3] = {{-0.0250001, 1.7375-0.25, 0.353774}, {-0.435825, 2.52891, 0.257694}, {-0.237949, 4.04323, 0.285318}};
-    double realRightObs[3][3] = {{1.4408, 2.2066-0.25, 0.290743}, {1.577, 3.41446, 0.251558}, {1.5515, 4.56942, 0.313249}};
-
-    for(int i = 0; i < 3; i++)
-    {
-        ObsPose tempObs;
-        tempObs.x = realLeftObs[i][0];
-        tempObs.y = realLeftObs[i][1];
-        tempObs.r = realLeftObs[i][2];
-        lObsPoses.push_back(tempObs);
-    }
-
-    for(int i = 0; i < 3; i++)
-    {
-        ObsPose tempObs;
-        tempObs.x = realRightObs[i][0];
-        tempObs.y = realRightObs[i][1];
-        tempObs.r = realRightObs[i][2];
-        rObsPoses.push_back(tempObs);
-    }
+//    for(int i = 0; i < 3; i++)
+//    {
+//        ObsPose tempObs;
+//        tempObs.x = realRightObs[i][0];
+//        tempObs.y = realRightObs[i][1];
+//        tempObs.r = realRightObs[i][2];
+//        rObsPoses.push_back(tempObs);
+//    }
 
     std::string xml_address;
 
