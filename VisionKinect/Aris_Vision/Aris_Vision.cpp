@@ -263,7 +263,6 @@ void KINECT::updateData(VISION_DATA &data)
 
 void KINECT_BASE::init()
 {
-
     mKinectStruct->mStatus = mKinectStruct->mContext.Init();
     mKinectStruct->CheckOpenNIError(mKinectStruct->mStatus, "initialize context");
     mKinectStruct->mapDepthMode.nFPS = 30;
@@ -273,37 +272,72 @@ void KINECT_BASE::init()
     xn::NodeInfoList liChains;
     mKinectStruct->mContext.EnumerateProductionTrees(XN_NODE_TYPE_DEVICE, NULL, liChains, NULL);
 
-    unsigned int uKinectNum = 0;
+    string terrainKin = "A22596V01639310A";
+    string avoidKin = "A22596705513327A";
+    string terrainKinNum;
+    string avoidKinNum;
+
+    for(int i = 1; i < 7; i++)
+    {
+        ifstream serialFile;
+        ifstream devNumFile;
+        stringstream filename;
+        filename << i ;
+        string serailFileDir ="/sys/bus/usb/devices/usb1/1-" + filename.str() + "/serial";
+        string devNumFileDir ="/sys/bus/usb/devices/usb1/1-" + filename.str() + "/devnum";
+        serialFile.open(serailFileDir,ios::in);
+        devNumFile.open(devNumFileDir,ios::in);
+
+        if(serialFile.is_open())
+        {
+            string devSerial;
+            serialFile >> devSerial;
+            string devNum;
+            if(devSerial == terrainKin)
+            {
+                devNumFile >> devNum;
+                int i = std::stoi(devNum) + 2;
+                stringstream temp;
+                temp << i;
+                terrainKinNum = "045e/02bf@1/" + temp.str();
+                // cout<<terrainKinNum<<endl;
+            }
+            if(devSerial == avoidKin)
+            {
+                devNumFile >> devNum;
+                int i = std::stoi(devNum) + 2;
+                stringstream temp;
+                temp << i;
+                avoidKinNum = "045e/02bf@1/" + temp.str();
+                // cout<<avoidKinNum<<endl;
+            }
+
+        }
+    }
 
     for(xn::NodeInfoList::Iterator itNode = liChains.Begin(); itNode != liChains.End(); ++ itNode)
     {
+
         xn::NodeInfo mNodeInf = *itNode;
 
-        XnProductionNodeDescription desc = mNodeInf.GetDescription();
+        string curDevSerial = mNodeInf.GetCreationInfo();
 
-        cout << "\nDevice"<<++uKinectNum<<"\n"<<desc.strVendor<<"-"<<desc.strName;
+        if(curDevSerial == avoidKinNum)
+        {
+            xn::Device devNode;
+            mKinectStruct->mContext.CreateProductionTree(mNodeInf, devNode);
 
-        XnVersion& rVer = desc.Version;
+            xn::Query mQuery;
+            mQuery.AddNeededNode(mNodeInf.GetInstanceName());
 
-        cout<<" \n Version"<<(int)rVer.nMajor<<"."<<(int)rVer.nMinor;
-        cout<<"."<<rVer.nMaintenance<<"."<<rVer.nBuild;
+            mKinectStruct->mStatus = mKinectStruct->mDepthGenerator.Create(mKinectStruct->mContext, &mQuery);
 
-        cout<<"\n Creat Info:: "<<mNodeInf.GetCreationInfo()<<endl;
-
-        xn::Device devNode;
-        mKinectStruct->mContext.CreateProductionTree(mNodeInf, devNode);
-
-        xn::Query mQuery;
-        mQuery.AddNeededNode(mNodeInf.GetInstanceName());
-
-        mKinectStruct->mStatus = mKinectStruct->mDepthGenerator.Create(mKinectStruct->mContext, &mQuery);
-
-        mKinectStruct->CheckOpenNIError(mKinectStruct->mStatus, "Create depth Generator");
-        mKinectStruct->mStatus = mKinectStruct->mDepthGenerator.SetMapOutputMode(mKinectStruct->mapDepthMode);
-        mKinectStruct->CheckOpenNIError(mKinectStruct->mStatus, "Map Mode Set");
-        mKinectStruct->mStatus  = mKinectStruct->mContext.StartGeneratingAll();
-        mKinectStruct->CheckOpenNIError(mKinectStruct->mStatus, "Start View Cloud");
-
+            mKinectStruct->CheckOpenNIError(mKinectStruct->mStatus, "Create depth Generator");
+            mKinectStruct->mStatus = mKinectStruct->mDepthGenerator.SetMapOutputMode(mKinectStruct->mapDepthMode);
+            mKinectStruct->CheckOpenNIError(mKinectStruct->mStatus, "Map Mode Set");
+            mKinectStruct->mStatus  = mKinectStruct->mContext.StartGeneratingAll();
+            mKinectStruct->CheckOpenNIError(mKinectStruct->mStatus, "Start View Cloud");
+        }
     }
 }
 
@@ -353,11 +387,6 @@ void KINECT_BASE::updateData(VISION_DATA &data)
             0, 1, 0, 0.85,
             0, 0, 1, 0,
             0, 0, 0, 1;
-
-    //    robotToWorld << 1, 0, 0, 0,
-    //            0, 1, 0, 0,
-    //            0, 0, 1, 0,
-    //            0, 0, 0, 1;
 
     Matrix4f kinectToWorld = robotToWorld*kinectToRobot*kinectAdjust;
 

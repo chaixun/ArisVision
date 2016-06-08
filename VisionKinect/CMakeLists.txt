@@ -84,7 +84,8 @@ set(VISION_INCL_DIR "./Aris_Vision")
 
 set(ALL_INCL_DIR ${VISION_INCL_DIR} ${ROBOTS_INCL_DIR} ${ARIS_INCL_DIR} ${OPENNI_INCL_DIR} ${XSENS_INCL_DIR} ${ETHERLAB_INCL_DIR} ${XENOMAI_INCL_DIR} ${GENERAL_INCL_DIR})
 set(ALL_LINK_DIR ${ROBOTS_LINK_DIR} ${ARIS_LINK_DIR} ${OPENNI_LINK_DIR} ${XSENS_LINK_DIR} ${ETHERLAB_LINK_DIR} ${XENOMAI_LINK_DIR})
-set(ALL_LINK_LIB ${ROBOTS_LINK_LIB} ${ARIS_LINK_LIB} ${OPENNI_LINK_LIB} ${XSENS_LINK_LIB} ${ETHERLAB_LINK_LIB} ${XENOMAI_LINK_LIB} ${SYSTEM_LINK_LIB})
+#set(ALL_LINK_LIB ${ROBOTS_LINK_LIB} ${ARIS_LINK_LIB} ${OPENNI_LINK_LIB} ${XSENS_LINK_LIB} ${ETHERLAB_LINK_LIB} ${XENOMAI_LINK_LIB} ${SYSTEM_LINK_LIB})
+set(ALL_LINK_LIB ${ROBOTS_LINK_LIB} ${ARIS_LINK_LIB} ${OPENNI_LINK_LIB} ${SYSTEM_LINK_LIB})
 endif(UNIX)
 if(WIN32)
 set(GENERAL_INCL_DIR "C:/Aris_Dependent")
@@ -111,15 +112,15 @@ link_directories(${ALL_LINK_DIR})
 set(SOURCE_FILES main.cpp)
 PREPEND(FULL_SRC Server ${SOURCE_FILES})
 
-set(VISION_SOURCE_FILES Aris_Vision.cpp Vision_Terrain0.cpp Vision_Gait0.cpp)
+set(VISION_SOURCE_FILES Aris_Vision.cpp)
 PREPEND(VISION_FULL_SRC Aris_Vision ${VISION_SOURCE_FILES})
 
 add_executable(Server ${FULL_SRC} ${VISION_FULL_SRC})
 target_link_libraries(Server ${ALL_LINK_LIB})
 
 ################################### build client ####################################
-add_executable(rbt Client/client.cpp)
-target_link_libraries(rbt ${ALL_LINK_LIB})
+#add_executable(rbt Client/client.cpp)
+#target_link_libraries(rbt ${ALL_LINK_LIB})
 
 
 
