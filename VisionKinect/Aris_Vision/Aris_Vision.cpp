@@ -272,19 +272,22 @@ void KINECT_BASE::init()
     xn::NodeInfoList liChains;
     mKinectStruct->mContext.EnumerateProductionTrees(XN_NODE_TYPE_DEVICE, NULL, liChains, NULL);
 
-    string terrainKin = "A22596V01639310A";
-    string avoidKin = "A22596705513327A";
+    //    string terrainKin = "A22596V01639310A";
+    //    string avoidKin = "A22596705513327A";
+    string terrainKin = "A22593B00192416A";
+    string avoidKin = "A22596703731327A";
     string terrainKinNum;
     string avoidKinNum;
 
-    for(int i = 1; i < 7; i++)
+    for(int i = 1; i <= 8; i++)
     {
         ifstream serialFile;
         ifstream devNumFile;
         stringstream filename;
         filename << i ;
-        string serailFileDir ="/sys/bus/usb/devices/usb1/1-" + filename.str() + "/serial";
-        string devNumFileDir ="/sys/bus/usb/devices/usb1/1-" + filename.str() + "/devnum";
+        string serailFileDir ="/sys/bus/usb/devices/usb2/2-1/2-1." + filename.str() + "/2-1." + filename.str() + ".1/serial";
+        string devNumFileDir ="/sys/bus/usb/devices/usb2/2-1/2-1." + filename.str() + "/2-1." + filename.str() + ".1/devnum";
+
         serialFile.open(serailFileDir,ios::in);
         devNumFile.open(devNumFileDir,ios::in);
 
@@ -296,19 +299,19 @@ void KINECT_BASE::init()
             if(devSerial == terrainKin)
             {
                 devNumFile >> devNum;
-                int i = std::stoi(devNum) + 2;
+                int i = std::stoi(devNum) + 1;
                 stringstream temp;
                 temp << i;
-                terrainKinNum = "045e/02bf@1/" + temp.str();
+                terrainKinNum = "045e/02bf@2/" + temp.str();
                 // cout<<terrainKinNum<<endl;
             }
             if(devSerial == avoidKin)
             {
                 devNumFile >> devNum;
-                int i = std::stoi(devNum) + 2;
+                int i = std::stoi(devNum) + 1;
                 stringstream temp;
                 temp << i;
-                avoidKinNum = "045e/02bf@1/" + temp.str();
+                avoidKinNum = "045e/02bf@2/" + temp.str();
                 // cout<<avoidKinNum<<endl;
             }
 
@@ -321,6 +324,8 @@ void KINECT_BASE::init()
         xn::NodeInfo mNodeInf = *itNode;
 
         string curDevSerial = mNodeInf.GetCreationInfo();
+
+        // cout<<curDevSerial<<endl;
 
         if(curDevSerial == avoidKinNum)
         {
