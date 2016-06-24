@@ -69,7 +69,7 @@ private:
     void OutBodyPose();
     void OutFeetPosi();
     void OutFeetTraj1(double cBodyPose[6], double feetTrajPosi[18], int timeCount, int numCycle);
-    void OutFeetTraj(FootHold feetHold1, FootHold feetHold2, double feetTrajPosi[18], int timeCount);
+    void OutFeetTraj(double feetTrajPosi[18], int timeCount, int numCycle);
 };
 
 #endif // ESCAPINGPLANNER_H
