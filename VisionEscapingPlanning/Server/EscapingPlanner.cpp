@@ -1,23 +1,9 @@
 #include "EscapingPlanner.h"
 
-double acc_even(int n, int i)
-{
-    return 1.0 / n / n  * i * i;
-}
-double dec_even(int n, int i)
-{
-    return 1.0 - 1.0 / n / n * (n - i)*(n - i);
-}
-double even(int n, int i)
-{
-    return 1.0 / n*i;
-}
-
 EscapingPlanner::EscapingPlanner()
 {
     RobPose startBodyPose = { 0, 0, 0, 0, 0, 0 };
     bodyPoses.push_back(startBodyPose);
-    //    FootHold startFoothold = {-0.3, 0.65, -0.45, 0, -0.3, -0.65, 0.3, 0.65, 0.45, 0, 0.3, -0.65};
     FootHold startFoothold = { 0.65, 0.3, 0, 0.45, -0.65, 0.3, 0.65, -0.3, 0, -0.45, -0.65, -0.3 };
     feetPoses.push_back(startFoothold);
     timeStart = 0;
@@ -257,13 +243,32 @@ void EscapingPlanner::OutFeetPosi()
 void EscapingPlanner::OutFeetTraj(double feetTrajPosi[18], int timeCount, int numCycle)
 {
 
-    const double s = -(M_PI / 2)*cos(M_PI * (timeCount + 1) / halfStepT) + M_PI / 2;
+    //    const double s = -(M_PI / 2)*cos(M_PI * (timeCount + 1) / halfStepT) + M_PI / 2;
+
+        double s;
+        double timeRatio = double(timeCount + 1) / halfStepT;
+        double tacc = 0.35;
+        double acc = 3.1415926535897931 / tacc / (1 - tacc);
+
+        if (timeRatio <= tacc)
+        {
+            s = 0.5 * (timeRatio*timeRatio) * acc;
+        }
+        else if (timeRatio <= 1-tacc)
+        {
+            s = 0.5 * tacc * tacc * acc +
+                tacc * acc * (timeRatio - tacc);
+        }
+        else
+        {
+            s = tacc * acc - 1.5 * tacc*tacc * acc +
+                    tacc * acc * (timeRatio - 1 + tacc) -
+                    0.5 * (timeRatio - 1 + tacc)*(timeRatio - 1 + tacc) * acc;
+        }
+
 
     for (int i = 0; i < 6; i++)
     {
-        //        Point2D foot1 = { feetHold1.feetHold[i * 2], feetHold1.feetHold[i * 2 + 1] };
-        //        Point2D foot2 = { feetHold2.feetHold[i * 2], feetHold2.feetHold[i * 2 + 1] };
-
         Point2D foot1 = { feetPoses[numCycle].feetHold[i * 2], feetPoses[numCycle].feetHold[i * 2 + 1] };
         Point2D foot2 = { feetPoses[numCycle + 1].feetHold[i * 2], feetPoses[numCycle + 1].feetHold[i * 2 + 1] };
 
@@ -294,192 +299,7 @@ void EscapingPlanner::OutFeetTraj(double feetTrajPosi[18], int timeCount, int nu
     //cout<<feetTrajPosi[9]<<" "<<feetTrajPosi[10]<<" "<<feetTrajPosi[11]<<endl;
 }
 
-int EscapingPlanner::OutBodyandFeetTraj(double bodyPose[6], double feetPosi[18], int timeNow)
-{
-    if (plannerState == GAITSTART)
-    {
-        double bodySpeed = halfStep / (halfStepT / 1000);
-
-        double cbodyPose[6] = { 0 };
-        double cFeetPosi[18] = { 0 };
-
-        int iInCycle = (timeNow - timeStart) % halfStepT;
-        int numCycle = (timeNow - timeStart) / halfStepT;
-
-        if (timeNow - timeStart <= halfStepT)
-        {
-            if (timeNow - timeStart == 0)
-            {
-                bodyX = 0;
-            }
-            //bodyX += double(iInCycle) / halfStepT * bodySpeed / sqrt(1 + pow(splinePath.getSlope(bodyX), 2))*0.001;
-
-            bodyX = bodyPoses[numCycle].x + acc_even(halfStepT, iInCycle + 1) * (bodyPoses[numCycle + 1].x - bodyPoses[numCycle].x);
-            bodyY = splinePath(bodyX);
-            bodyalpha1 = atan(splinePath.getSlope(bodyX));
-
-            cbodyPose[0] = bodyX;
-            cbodyPose[1] = bodyY;
-            cbodyPose[3] = bodyalpha1;
-
-            OutFeetTraj(cFeetPosi, iInCycle, numCycle);
-        }
-        else if (timeNow - timeStart <= int((bodyPoses.size() - 2)) * halfStepT)
-        {
-            bodyX += bodySpeed / sqrt(1 + pow(splinePath.getSlope(bodyX), 2))*0.001;
-
-            // bodyX = bodyPoses[numCycle].x + even(halfStepT, iInCycle + 1) * (bodyPoses[numCycle + 1].x - bodyPoses[numCycle].x);
-            bodyY = splinePath(bodyX);
-            bodyalpha1 = atan(splinePath.getSlope(bodyX));
-
-            cbodyPose[0] = bodyX;
-            cbodyPose[1] = bodyY;
-            cbodyPose[3] = bodyalpha1;
-
-            OutFeetTraj(cFeetPosi, iInCycle, numCycle);
-        }
-        else if (timeNow - timeStart <= int((bodyPoses.size() - 1)) * halfStepT)
-        {
-            bodyX = bodyPoses[numCycle].x + dec_even(halfStepT, iInCycle + 1) * (bodyPoses[numCycle + 1].x - bodyPoses[numCycle].x);
-            bodyY = splinePath(bodyX);
-            bodyalpha1 = atan(splinePath.getSlope(bodyX));
-
-            cbodyPose[0] = bodyX;
-            cbodyPose[1] = bodyY;
-            cbodyPose[3] = bodyalpha1;
-
-           OutFeetTraj(cFeetPosi, iInCycle, numCycle);
-        }
-
-        for (int i = 0; i < 6; i++)
-        {
-            feetPosi[i * 3] = -cFeetPosi[i * 3 + 1];
-            feetPosi[i * 3 + 1] = cFeetPosi[i * 3 + 2] - 0.85;
-            feetPosi[i * 3 + 2] = -cFeetPosi[i * 3];
-        }
-
-        bodyPose[0] = -cbodyPose[1];
-        bodyPose[1] = cbodyPose[2];
-        bodyPose[2] = -cbodyPose[0];
-        bodyPose[3] = M_PI / 2;
-        bodyPose[4] = cbodyPose[3];
-        bodyPose[5] = -M_PI / 2;
-
-        return ((bodyPoses.size() - 1) * halfStepT - timeNow + timeStart - 1);
-
-        if(((bodyPoses.size() - 1) * halfStepT - timeNow + timeStart - 1) == 0)
-        {
-            plannerState = PATHFOLLOWINGFINISHED;
-        }
-
-    }
-    return -1;
-}
-
-void EscapingPlanner::OutFeetTraj1(double cBodyPose[6], double feetTrajPosi[18], int timeCount, int numCycle)
-{
-    const double s = -(M_PI / 2)*cos(M_PI * (timeCount + 1) / halfStepT) + M_PI / 2;
-
-    //    double s;
-    //    double timeRatio = double(timeCount + 1) / halfStepT;
-    //    double tacc = 0.35;
-    //    double acc = 3.1415926535897931 / tacc / (1 - tacc);
-
-    //    if (timeRatio < tacc)
-    //    {
-    //        s = 0.5 * (timeRatio*timeRatio) * acc;
-    //    }
-    //    else if (timeRatio < 1-tacc)
-    //    {
-    //        s = 0.5 * tacc * tacc * acc +
-    //            tacc * acc * (timeRatio - tacc);
-    //    }
-    //    else
-    //    {
-    //        s = tacc * acc - 1.5 * tacc*tacc * acc +
-    //                tacc * acc * (timeRatio - 1 + tacc) -
-    //                0.5 * (timeRatio - 1 + tacc)*(timeRatio - 1 + tacc) * acc;
-    //    }
-
-    Matrix3d tRG1(3, 3);
-    tRG1 << cos(bodyPoses[numCycle].alpha), -sin(bodyPoses[numCycle].alpha), bodyPoses[numCycle].x,
-            sin(bodyPoses[numCycle].alpha), cos(bodyPoses[numCycle].alpha), bodyPoses[numCycle].y,
-            0, 0, 1;
-
-    Matrix3d tGR1(3, 3);
-    tGR1 = tRG1.inverse();
-
-    //cout << "tRG1" << endl << tRG1 << endl;
-
-    Matrix3d tRG2(3, 3);
-    tRG2 << cos(bodyPoses[numCycle + 1].alpha), -sin(bodyPoses[numCycle + 1].alpha), bodyPoses[numCycle + 1].x,
-            sin(bodyPoses[numCycle + 1].alpha), cos(bodyPoses[numCycle + 1].alpha), bodyPoses[numCycle + 1].y,
-            0, 0, 1;
-
-    //cout << "tRG2" << endl << tRG2 << endl;
-
-    Matrix3d tGR2(3, 3);
-    tGR2 = tRG2.inverse();
-
-    Matrix3d tRG(3, 3);
-    tRG << cos(cBodyPose[3]), -sin(cBodyPose[3]), cBodyPose[0],
-            sin(cBodyPose[3]), cos(cBodyPose[3]), cBodyPose[1],
-            0, 0, 1;
-
-    //cout << "tRG" << endl << tRG << endl;
-
-    Matrix3d tGR(3, 3);
-    tGR = tRG.inverse();
-
-    //cout << "Feet 1：" << feetPoses[numCycle].feetHold[0] << " " << feetPoses[numCycle].feetHold[1] << " " << feetPoses[numCycle].feetHold[2] << " " << feetPoses[numCycle].feetHold[3] << endl;
-    //cout << "Feet 2：" << feetPoses[numCycle + 1].feetHold[0] << " " << feetPoses[numCycle + 1].feetHold[1] << " " << feetPoses[numCycle + 1].feetHold[2] << " " << feetPoses[numCycle + 1].feetHold[3] << endl;
-
-    for (int i = 0; i < 6; i++)
-    {
-        Point2D foot1 = { feetPoses[numCycle].feetHold[i * 2], feetPoses[numCycle].feetHold[i * 2 + 1] };
-        Point2D foot2 = { feetPoses[numCycle + 1].feetHold[i * 2], feetPoses[numCycle + 1].feetHold[i * 2 + 1] };
-
-        if (foot1.x != foot2.x)
-        {
-            Point2D footLocal1 = { foot1.x * tGR1(0, 0) + foot1.y * tGR1(0, 1) + tGR1(0, 2), foot1.x * tGR1(1, 0) + foot1.y * tGR1(1, 1) + tGR1(1, 2) };
-            Point2D footLocal2 = { foot2.x * tGR2(0, 0) + foot2.y * tGR2(0, 1) + tGR2(0, 2), foot2.x * tGR2(1, 0) + foot2.y * tGR2(1, 1) + tGR2(1, 2) };
-            Point2D difFoot = { footLocal2.x - footLocal1.x, footLocal2.y - footLocal1.y };
-
-            double ellipL = sqrt(difFoot.x * difFoot.x + difFoot.y * difFoot.y);
-            double ellipH = 0.04;
-            double theta = atan2(difFoot.y, difFoot.x);
-            double x = footLocal1.x + (ellipL / 2 - ellipL / 2 * cos(s)) * cos(theta);
-            double y = footLocal1.y + (ellipL / 2 - ellipL / 2 * cos(s)) * sin(theta);
-            double z = ellipH * sin(s);
-
-            double xG = x * tRG(0, 0) + y * tRG(0, 1) + tRG(0, 2);
-            double yG = x * tRG(1, 0) + y * tRG(1, 1) + tRG(1, 2);
-            double zG = z;
-
-            //            if (timeCount == halfStepT - 1)
-            //            {
-            //                xG = foot2.x;
-            //                yG = foot2.y;
-            //                zG = 0;
-            //            }
-
-            feetTrajPosi[i * 3 + 0] = xG;
-            feetTrajPosi[i * 3 + 1] = yG;
-            feetTrajPosi[i * 3 + 2] = zG;
-        }
-        else
-        {
-            double x = foot1.x;
-            double y = foot1.y;
-            double z = 0;
-            feetTrajPosi[i * 3 + 0] = x;
-            feetTrajPosi[i * 3 + 1] = y;
-            feetTrajPosi[i * 3 + 2] = z;
-        }
-    }
-}
-
-void EscapingPlanner::OutBodyandFeetTraj1(double bodyPose[6], double feetPosi[18], int timeNow)
+void EscapingPlanner::OutBodyandFeetTraj(double bodyPose[6], double feetPosi[18], int timeNow)
 {
     if (plannerState == GAITSTART)
     {
@@ -500,46 +320,39 @@ void EscapingPlanner::OutBodyandFeetTraj1(double bodyPose[6], double feetPosi[18
             double acc = bodySpeed / (halfStepT / 1000);
             double vAcc = 0 + acc * (double(iInCycle) / 1000);
             bodyX += vAcc / sqrt(1 + pow(splinePath.getSlope(bodyX), 2)) * 0.001;
-            //bodyX = bodyPoses[numCycle].x + acc_even(halfStepT, iInCycle + 1) * (bodyPoses[numCycle + 1].x - bodyPoses[numCycle].x);
-            //bodyX += double(iInCycle) / halfStepT * bodySpeed / sqrt(1 + pow(splinePath.getSlope(bodyX), 2))*0.001;
             bodyY = splinePath(bodyX);
-            bodyalpha1 = atan(splinePath.getSlope(bodyX));
+            bodyalpha = atan(splinePath.getSlope(bodyX));
 
             cbodyPose[0] = bodyX;
             cbodyPose[1] = bodyY;
-            cbodyPose[3] = bodyalpha1;
+            cbodyPose[3] = bodyalpha;
 
             OutFeetTraj(cFeetPosi, iInCycle, numCycle);
-            //OutFeetTraj1(cbodyPose, cFeetPosi, iInCycle, numCycle);
         }
         else if (timeNow - timeStart >= numCycle * halfStepT && timeNow - timeStart < (numCycle + 1) * halfStepT && numCycle < bodyPoses.size() - 2)
         {
-            // cout << numCycle << endl;
             bodyX += bodySpeed / sqrt(1 + pow(splinePath.getSlope(bodyX), 2)) * 0.001;
             bodyY = splinePath(bodyX);
-            bodyalpha1 = atan(splinePath.getSlope(bodyX));
+            bodyalpha = atan(splinePath.getSlope(bodyX));
 
             cbodyPose[0] = bodyX;
             cbodyPose[1] = bodyY;
-            cbodyPose[3] = bodyalpha1;
+            cbodyPose[3] = bodyalpha;
             OutFeetTraj(cFeetPosi, iInCycle, numCycle);
-            //OutFeetTraj1(cbodyPose, cFeetPosi, iInCycle, numCycle);
         }
         else if (timeNow - timeStart < int((bodyPoses.size() - 1)) * halfStepT)
         {
             double dec = - bodySpeed / (halfStepT / 1000);
             double vDec = bodySpeed + dec * (double(iInCycle) / 1000);
             bodyX += vDec / sqrt(1 + pow(splinePath.getSlope(bodyX), 2)) * 0.001;
-            //bodyX = bodyPoses[numCycle].x + dec_even(halfStepT, iInCycle + 1) * (bodyPoses[numCycle + 1].x - bodyPoses[numCycle].x);
             bodyY = splinePath(bodyX);
-            bodyalpha1 = atan(splinePath.getSlope(bodyX));
+            bodyalpha = atan(splinePath.getSlope(bodyX));
 
             cbodyPose[0] = bodyX;
             cbodyPose[1] = bodyY;
-            cbodyPose[3] = bodyalpha1;
+            cbodyPose[3] = bodyalpha;
 
             OutFeetTraj(cFeetPosi, iInCycle, numCycle);
-            //OutFeetTraj1(cbodyPose, cFeetPosi, iInCycle, numCycle);
         }
 
         for (int i = 0; i < 6; i++)

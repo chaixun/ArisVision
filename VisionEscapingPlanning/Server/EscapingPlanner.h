@@ -37,8 +37,7 @@ public:
     void PlannerStart(int timeNow);
     void GenEscapPath();
     void GenBodyandFeetPose();
-    int OutBodyandFeetTraj(double bodyPose[6], double feetPosi[18], int timeNow);
-    void OutBodyandFeetTraj1(double bodyPose[6], double feetPosi[18], int timeNow);
+    void OutBodyandFeetTraj(double bodyPose[6], double feetPosi[18], int timeNow);
     PLANNER_STATE GetPlannerState() const {return plannerState;}
 
 private:
@@ -51,8 +50,7 @@ private:
     double difXTraj = 0.00001;
     vector<RobPose> bodyPoses;
 
-    double bodyalpha0 = 0;
-    double bodyalpha1 = 0;
+    double bodyalpha = 0;
     double bodyX = 0;
     double bodyY = 0;
 
@@ -68,7 +66,6 @@ private:
     void SelMidPoint();
     void OutBodyPose();
     void OutFeetPosi();
-    void OutFeetTraj1(double cBodyPose[6], double feetTrajPosi[18], int timeCount, int numCycle);
     void OutFeetTraj(double feetTrajPosi[18], int timeCount, int numCycle);
 };
 
