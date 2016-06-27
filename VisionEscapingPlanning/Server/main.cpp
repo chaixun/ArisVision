@@ -26,6 +26,8 @@ int main(int argc, char *argv[])
 {   
     VisionAvoid::VisionAvoidWrapper::KinectStart();
 
+    // Test Start
+
     robPoses.clear();
 
     RobPose startPose = {0, 0, 0, 0, 0, 0};
@@ -34,7 +36,7 @@ int main(int argc, char *argv[])
     robPoses.push_back(startPose);
     robPoses.push_back(targetPose);
 
-    double realLeftObs[3][3] = {{-0.0250001, 1.7375 + 0.35, 0.353774}, {-0.435825, 2.52891, 0.257694}, {-0.237949, 4.04323, 0.285318}};
+    double realLeftObs[3][3] = {{-0.0250001, 1.7375, 0.353774}, {-0.435825, 2.52891, 0.257694}, {-0.237949, 4.04323, 0.285318}};
     double realRightObs[3][3] = {{1.4408, 2.2066, 0.290743}, {1.577, 3.41446, 0.251558}, {1.5515, 4.56942, 0.313249}};
 
     for(int i = 0; i < 3; i++)
@@ -54,6 +56,8 @@ int main(int argc, char *argv[])
         tempObs.r = realRightObs[i][2];
         rObsPoses.push_back(tempObs);
     }
+
+    // Test End
 
     std::string xml_address;
 

@@ -46,7 +46,7 @@ private:
     vector<Point2D> midPoints;
     vector<ObsPose> traLObsPoses;
     vector<ObsPose> traRObsPoses;
-    double halfStep = 0.1;
+    double halfStep = 0.18;
     double difXTraj = 0.00001;
     vector<RobPose> bodyPoses;
 

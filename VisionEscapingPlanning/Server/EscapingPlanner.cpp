@@ -1,5 +1,34 @@
 #include "EscapingPlanner.h"
 
+inline auto acc_up(int n, int i)noexcept->double
+{
+    return (-1.0 / 2 / n / n / n * i*i*i + 3.0 / 2 / n / n * i*i);
+}
+inline auto acc_down(int n, int i)noexcept->double
+{
+    return (-1.0*i*i*i / 2.0 / n / n / n + 3.0 * i*i / 2 / n / n);
+}
+inline auto dec_up(int n, int i)noexcept->double
+{
+    return 1 - (-1.0 / 2 / n / n / n * (n - i)*(n - i)*(n - i) + 3.0 / 2 / n / n * (n - i)*(n - i));
+}
+inline auto dec_down(int n, int i)noexcept->double
+{
+    return 1 - (-1.0*(n - i)*(n - i)*(n - i) / 2.0 / n / n / n + 3.0 * (n - i)*(n - i) / 2 / n / n);
+}
+inline auto acc_even(int n, int i)noexcept->double
+{
+    return 1.0 / n / n  * i * i;
+}
+inline auto dec_even(int n, int i)noexcept->double
+{
+    return 1.0 - 1.0 / n / n * (n - i)*(n - i);
+}
+inline auto even(int n, int i)noexcept->double
+{
+    return 1.0 / n*i;
+}
+
 EscapingPlanner::EscapingPlanner()
 {
     RobPose startBodyPose = { 0, 0, 0, 0, 0, 0 };
@@ -120,7 +149,7 @@ void EscapingPlanner::GenEscapPath()
         //cout<<curveX[i]<<" "<<curveY[i]<<endl;
     }
 
-    splinePath.set_boundary(tk::spline::bd_type::first_deriv, 0, tk::spline::bd_type::first_deriv, -robPoses.back().gama, false);
+    splinePath.set_boundary(tk::spline::bd_type::first_deriv, 0, tk::spline::bd_type::first_deriv, tan(-robPoses.back().gama), false);
     splinePath.set_points(curveX, curveY);
     GenBodyandFeetPose();
     //    cout<<splinePath(2)<<endl;
@@ -243,28 +272,7 @@ void EscapingPlanner::OutFeetPosi()
 void EscapingPlanner::OutFeetTraj(double feetTrajPosi[18], int timeCount, int numCycle)
 {
 
-    //    const double s = -(M_PI / 2)*cos(M_PI * (timeCount + 1) / halfStepT) + M_PI / 2;
-
-        double s;
-        double timeRatio = double(timeCount + 1) / halfStepT;
-        double tacc = 0.35;
-        double acc = 3.1415926535897931 / tacc / (1 - tacc);
-
-        if (timeRatio <= tacc)
-        {
-            s = 0.5 * (timeRatio*timeRatio) * acc;
-        }
-        else if (timeRatio <= 1-tacc)
-        {
-            s = 0.5 * tacc * tacc * acc +
-                tacc * acc * (timeRatio - tacc);
-        }
-        else
-        {
-            s = tacc * acc - 1.5 * tacc*tacc * acc +
-                    tacc * acc * (timeRatio - 1 + tacc) -
-                    0.5 * (timeRatio - 1 + tacc)*(timeRatio - 1 + tacc) * acc;
-        }
+    const double s = -(M_PI / 2)*cos(M_PI * (timeCount + 1) / halfStepT) + M_PI / 2;
 
 
     for (int i = 0; i < 6; i++)
@@ -319,7 +327,8 @@ void EscapingPlanner::OutBodyandFeetTraj(double bodyPose[6], double feetPosi[18]
             }
             double acc = bodySpeed / (halfStepT / 1000);
             double vAcc = 0 + acc * (double(iInCycle) / 1000);
-            bodyX += vAcc / sqrt(1 + pow(splinePath.getSlope(bodyX), 2)) * 0.001;
+            //bodyX += vAcc / sqrt(1 + pow(splinePath.getSlope(bodyX), 2)) * 0.001;
+            bodyX =  bodyPoses[numCycle].x + acc_even(halfStepT, iInCycle + 1) * (bodyPoses[numCycle + 1].x - bodyPoses[numCycle].x);
             bodyY = splinePath(bodyX);
             bodyalpha = atan(splinePath.getSlope(bodyX));
 
@@ -331,7 +340,8 @@ void EscapingPlanner::OutBodyandFeetTraj(double bodyPose[6], double feetPosi[18]
         }
         else if (timeNow - timeStart >= numCycle * halfStepT && timeNow - timeStart < (numCycle + 1) * halfStepT && numCycle < bodyPoses.size() - 2)
         {
-            bodyX += bodySpeed / sqrt(1 + pow(splinePath.getSlope(bodyX), 2)) * 0.001;
+            //bodyX += bodySpeed / sqrt(1 + pow(splinePath.getSlope(bodyX), 2)) * 0.001;
+            bodyX =  bodyPoses[numCycle].x + even(halfStepT, iInCycle + 1) * (bodyPoses[numCycle + 1].x - bodyPoses[numCycle].x);
             bodyY = splinePath(bodyX);
             bodyalpha = atan(splinePath.getSlope(bodyX));
 
@@ -344,7 +354,8 @@ void EscapingPlanner::OutBodyandFeetTraj(double bodyPose[6], double feetPosi[18]
         {
             double dec = - bodySpeed / (halfStepT / 1000);
             double vDec = bodySpeed + dec * (double(iInCycle) / 1000);
-            bodyX += vDec / sqrt(1 + pow(splinePath.getSlope(bodyX), 2)) * 0.001;
+            //bodyX += vDec / sqrt(1 + pow(splinePath.getSlope(bodyX), 2)) * 0.001;
+            bodyX =  bodyPoses[numCycle].x + dec_even(halfStepT, iInCycle + 1) * (bodyPoses[numCycle + 1].x - bodyPoses[numCycle].x);
             bodyY = splinePath(bodyX);
             bodyalpha = atan(splinePath.getSlope(bodyX));
 
@@ -377,3 +388,26 @@ void EscapingPlanner::OutBodyandFeetTraj(double bodyPose[6], double feetPosi[18]
         }
     }
 }
+
+//{
+//        double s;
+//        double timeRatio = double(timeCount + 1) / halfStepT;
+//        double tacc = 0.35;
+//        double acc = 3.1415926535897931 / tacc / (1 - tacc);
+
+//        if (timeRatio <= tacc)
+//        {
+//            s = 0.5 * (timeRatio*timeRatio) * acc;
+//        }
+//        else if (timeRatio <= 1-tacc)
+//        {
+//            s = 0.5 * tacc * tacc * acc +
+//                tacc * acc * (timeRatio - tacc);
+//        }
+//        else
+//        {
+//            s = tacc * acc - 1.5 * tacc*tacc * acc +
+//                    tacc * acc * (timeRatio - 1 + tacc) -
+//                    0.5 * (timeRatio - 1 + tacc)*(timeRatio - 1 + tacc) * acc;
+//        }
+//}

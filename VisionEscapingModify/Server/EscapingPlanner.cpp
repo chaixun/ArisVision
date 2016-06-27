@@ -16,7 +16,6 @@ inline auto dec_down(int n, int i)noexcept->double
 {
     return 1 - (-1.0*(n - i)*(n - i)*(n - i) / 2.0 / n / n / n + 3.0 * (n - i)*(n - i) / 2 / n / n);
 }
-
 inline auto acc_even(int n, int i)noexcept->double
 {
     return 1.0 / n / n  * i * i;
@@ -150,7 +149,7 @@ void EscapingPlanner::GenEscapPath()
         //cout<<curveX[i]<<" "<<curveY[i]<<endl;
     }
 
-    splinePath.set_boundary(tk::spline::bd_type::first_deriv, 0, tk::spline::bd_type::first_deriv, -robPoses.back().gama, false);
+    splinePath.set_boundary(tk::spline::bd_type::first_deriv, 0, tk::spline::bd_type::first_deriv, tan(-robPoses.back().gama), false);
     splinePath.set_points(curveX, curveY);
     GenBodyandFeetPose();
     //    cout<<splinePath(2)<<endl;
@@ -389,48 +388,6 @@ void EscapingPlanner::OutBodyandFeetTraj(double bodyPose[6], double feetPosi[18]
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //{
 //        double s;
