@@ -307,7 +307,7 @@ void EscapingPlanner::OutFeetTraj(double feetTrajPosi[18], int timeCount, int nu
     //cout<<feetTrajPosi[9]<<" "<<feetTrajPosi[10]<<" "<<feetTrajPosi[11]<<endl;
 }
 
-void EscapingPlanner::OutBodyandFeetTraj(double bodyPose[6], double feetPosi[18], int timeNow)
+int EscapingPlanner::OutBodyandFeetTraj(double bodyPose[6], double feetPosi[18], int timeNow)
 {
     if (plannerState == GAITSTART)
     {
@@ -325,9 +325,6 @@ void EscapingPlanner::OutBodyandFeetTraj(double bodyPose[6], double feetPosi[18]
             {
                 bodyX = 0;
             }
-            double acc = bodySpeed / (halfStepT / 1000);
-            double vAcc = 0 + acc * (double(iInCycle) / 1000);
-            //bodyX += vAcc / sqrt(1 + pow(splinePath.getSlope(bodyX), 2)) * 0.001;
             bodyX =  bodyPoses[numCycle].x + acc_even(halfStepT, iInCycle + 1) * (bodyPoses[numCycle + 1].x - bodyPoses[numCycle].x);
             bodyY = splinePath(bodyX);
             bodyalpha = atan(splinePath.getSlope(bodyX));
@@ -340,7 +337,6 @@ void EscapingPlanner::OutBodyandFeetTraj(double bodyPose[6], double feetPosi[18]
         }
         else if (timeNow - timeStart >= numCycle * halfStepT && timeNow - timeStart < (numCycle + 1) * halfStepT && numCycle < bodyPoses.size() - 2)
         {
-            //bodyX += bodySpeed / sqrt(1 + pow(splinePath.getSlope(bodyX), 2)) * 0.001;
             bodyX =  bodyPoses[numCycle].x + even(halfStepT, iInCycle + 1) * (bodyPoses[numCycle + 1].x - bodyPoses[numCycle].x);
             bodyY = splinePath(bodyX);
             bodyalpha = atan(splinePath.getSlope(bodyX));
@@ -352,9 +348,6 @@ void EscapingPlanner::OutBodyandFeetTraj(double bodyPose[6], double feetPosi[18]
         }
         else if (timeNow - timeStart < int((bodyPoses.size() - 1)) * halfStepT)
         {
-            double dec = - bodySpeed / (halfStepT / 1000);
-            double vDec = bodySpeed + dec * (double(iInCycle) / 1000);
-            //bodyX += vDec / sqrt(1 + pow(splinePath.getSlope(bodyX), 2)) * 0.001;
             bodyX =  bodyPoses[numCycle].x + dec_even(halfStepT, iInCycle + 1) * (bodyPoses[numCycle + 1].x - bodyPoses[numCycle].x);
             bodyY = splinePath(bodyX);
             bodyalpha = atan(splinePath.getSlope(bodyX));
@@ -380,12 +373,9 @@ void EscapingPlanner::OutBodyandFeetTraj(double bodyPose[6], double feetPosi[18]
         bodyPose[4] = cbodyPose[3];
         bodyPose[5] = -M_PI / 2;
 
-        int n = (int(bodyPoses.size() - 1) * halfStepT - timeNow + timeStart);
+        int n = (int(bodyPoses.size() - 1) * halfStepT - timeNow + timeStart) - 1;
 
-        if (n == 1)
-        {
-            plannerState = PATHFOLLOWINGFINISHED;
-        }
+        return n;
     }
 }
 

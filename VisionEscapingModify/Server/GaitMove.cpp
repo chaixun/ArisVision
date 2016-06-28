@@ -79,24 +79,14 @@ int EscapingGaitWrapper::escapingGait(aris::dynamic::Model &model, const aris::d
         //rt_printf("Generate Finished \n");
     }
 
-    escapingPlanner.OutBodyandFeetTraj(bodyPose, feetPosi, timeNow);
+    int n = escapingPlanner.OutBodyandFeetTraj(bodyPose, feetPosi, timeNow);
 
     //     rt_printf("%f %f %f\n", bodyPose[0], bodyPose[2], bodyPose[4]);
 
     robot.SetPeb(bodyPose, beginMak);
     robot.SetPee(feetPosi, beginMak);
 
-    if(escapingPlanner.GetPlannerState() == EscapingPlanner::PATHFOLLOWINGFINISHED)
-    {
-        rt_printf("ending \n");
-
-        return 0;
-    }
-    else
-    {
-        return -1;
-    }
-
+    return n;
 }
 
 }

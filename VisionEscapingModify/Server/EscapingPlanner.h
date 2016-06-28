@@ -37,7 +37,7 @@ public:
     void PlannerStart(int timeNow);
     void GenEscapPath();
     void GenBodyandFeetPose();
-    void OutBodyandFeetTraj(double bodyPose[6], double feetPosi[18], int timeNow);
+    int OutBodyandFeetTraj(double bodyPose[6], double feetPosi[18], int timeNow);
     PLANNER_STATE GetPlannerState() const {return plannerState;}
 
 private:
