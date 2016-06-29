@@ -9,6 +9,7 @@ aris::control::Pipe<int> VisionAvoidWrapper::visionPipe(true);
 std::thread VisionAvoidWrapper::visionThread;
 
 vector<ObsPose> VisionAvoidWrapper::obsPosesGCS;
+RobPose VisionAvoidWrapper::targetPose = {0, 8, 0, 0, 0, 0};
 
 TerrainAnalysis VisionAvoidWrapper::terrainAnalysisResult;
 ObstacleDetection VisionAvoidWrapper::obstacleDetectionResult;
@@ -44,63 +45,142 @@ void VisionAvoidWrapper::KinectStart()
 
             cout<<"Curr Robot Pos: x:"<<robPoses.back().x<<" y:"<<robPoses.back().y<<" gama:"<<robPoses.back().gama<<endl;
 
-            obstacleDetectionResult.ObstacleDetecting(visiondata.get().obstacleMap, robPoses.back());
-
-            if(obstacleDetectionResult.obsPoses.size() > 0)
+            if(sqrt(pow((robPoses.back().y - targetPose.y),2)+pow((robPoses.back().x - targetPose.x),2)) <= 0.35)
             {
-                if(obsPosesGCS.size() == 0)
-                {
-                    obsPosesGCS.push_back(obstacleDetectionResult.obsPoses[0]);
-                }
-                else if(fabs(obsPosesGCS.back().x - obstacleDetectionResult.obsPoses[0].x) > obsPosesGCS.back().r
-                        ||fabs(obsPosesGCS.back().y - obstacleDetectionResult.obsPoses[0].y) > obsPosesGCS.back().r)
-                {
-                    obsPosesGCS.push_back(obstacleDetectionResult.obsPoses[0]);
-                }
-            }
-
-            for(int i = 0; i < obsPosesGCS.size(); i++)
-            {
-                cout<<"Obs "<<i<<" Pos: x:"<<obsPosesGCS[i].x<<" y:"<<obsPosesGCS[i].y<<" radius:"<<obsPosesGCS[i].r<<endl;
-            }
-
-            avoidControlResult.AvoidWalkControl(robPoses.back(), obsPosesGCS);
-
-            robPoses.push_back(avoidControlResult.nextRobotPos);
-
-            cout<<"Walk Step Num: "<<avoidControlResult.avoidWalkParam.stepNum<<endl;
-            cout<<"Walk Step Len: "<<avoidControlResult.avoidWalkParam.stepLength<<endl;
-            cout<<"Walk Step Dir: "<<avoidControlResult.avoidWalkParam.walkDirection<<endl;
-            cout<<"Rob Pose : "<<avoidControlResult.avoidWalkParam.robHead<<endl;
-            cout<<"Next Robot Pos: x:"<<avoidControlResult.nextRobotPos.x<<" y:"<<avoidControlResult.nextRobotPos.y<<endl;
-
-            visionWalkParam.movetype = avoidmove;
-            visionWalkParam.walkLength = avoidControlResult.avoidWalkParam.stepLength;
-            visionWalkParam.walkDirection = avoidControlResult.avoidWalkParam.walkDirection;
-            visionWalkParam.walkNum = avoidControlResult.avoidWalkParam.stepNum;
-            visionWalkParam.turndata = avoidControlResult.avoidWalkParam.turnAngel;
-
-            if(visionWalkParam.walkNum == 1)
-            {
-                visionWalkParam.totalCount = 1500;
+                visionWalkParam.movetype = nomove;
             }
             else
             {
-                visionWalkParam.totalCount = 3000*(visionWalkParam.walkNum - 0.5);
-            }
+                obstacleDetectionResult.ObstacleDetecting(visiondata.get().obstacleMap, robPoses.back());
 
-            if(visionWalkParam.turndata != 0)
-            {
+                if(obstacleDetectionResult.obsPoses.size() > 0)
+                {
+                    if(obsPosesGCS.size() == 0)
+                    {
+                        obsPosesGCS.push_back(obstacleDetectionResult.obsPoses[0]);
+                        //distinguish left or right obs
+                        Eigen::Matrix3f TRG;
+                        TRG << cos(robPoses.back().gama), -sin(robPoses.back().gama), robPoses.back().x,
+                                sin(robPoses.back().gama), cos(robPoses.back().gama), robPoses.back().y,
+                                0, 0, 1;
+                        Eigen::Matrix3f TGR = TRG.inverse();
+                        ObsPose obsGround = obstacleDetectionResult.obsPoses[0];
+                        ObsPose obsRobot;
+                        obsRobot.x = obsGround.x * TGR(0, 0) + obsGround.y * TGR(0, 1) + TGR(0, 2);
+                        obsRobot.y = obsGround.x * TGR(1, 0) + obsGround.y * TGR(1, 1) + TGR(1, 2);
+                        obsRobot.r = obsGround.r;
+                        if(obsRobot.x < 0)
+                        {
+                            lObsPoses.push_back(obsGround);
+                            ObsPose virtualObsRobot;
+                            virtualObsRobot.x = obsRobot.x + obsRobot.r + 0.2 + 0.9 + 0.2 + 0.3;
+                            virtualObsRobot.y = obsRobot.y;
+                            virtualObsRobot.r = 0.3;
+                            ObsPose virtualObsGround;
+                            virtualObsGround.x = virtualObsRobot.x * TRG(0, 0) + virtualObsRobot.y * TRG(0, 1) + TRG(0, 2);
+                            virtualObsGround.y = virtualObsRobot.x * TRG(1, 0) + virtualObsRobot.y * TRG(1, 1) + TRG(1, 2);
+                            virtualObsGround.r = virtualObsRobot.r;
+                            rObsPoses.push_back(virtualObsGround);
+                        }
+                        else
+                        {
+                            rObsPoses.push_back(obsGround);
+                            ObsPose virtualObsRobot;
+                            virtualObsRobot.x = obsRobot.x - obsRobot.r - 0.2 - 0.9 - 0.2 - 0.3;
+                            virtualObsRobot.y = obsRobot.y;
+                            virtualObsRobot.r = 0.3;
+                            ObsPose virtualObsGround;
+                            virtualObsGround.x = virtualObsRobot.x * TRG(0, 0) + virtualObsRobot.y * TRG(0, 1) + TRG(0, 2);
+                            virtualObsGround.y = virtualObsRobot.x * TRG(1, 0) + virtualObsRobot.y * TRG(1, 1) + TRG(1, 2);
+                            virtualObsGround.r = virtualObsRobot.r;
+                            lObsPoses.push_back(virtualObsGround);
+                        }
+
+                    }
+                    else if(fabs(obsPosesGCS.back().x - obstacleDetectionResult.obsPoses[0].x) > obsPosesGCS.back().r
+                            ||fabs(obsPosesGCS.back().y - obstacleDetectionResult.obsPoses[0].y) > obsPosesGCS.back().r)
+                    {
+                        obsPosesGCS.push_back(obstacleDetectionResult.obsPoses[0]);
+                        //distinguish left or right obs
+                        Eigen::Matrix3f TRG;
+                        TRG << cos(robPoses.back().gama), -sin(robPoses.back().gama), robPoses.back().x,
+                                sin(robPoses.back().gama), cos(robPoses.back().gama), robPoses.back().y,
+                                0, 0, 1;
+                        Eigen::Matrix3f TGR = TRG.inverse();
+                        ObsPose obsGround = obstacleDetectionResult.obsPoses[0];
+                        ObsPose obsRobot;
+                        obsRobot.x = obsGround.x * TGR(0, 0) + obsGround.y * TGR(0, 1) + TGR(0, 2);
+                        obsRobot.y = obsGround.x * TGR(1, 0) + obsGround.y * TGR(1, 1) + TGR(1, 2);
+                        obsRobot.r = obsGround.r;
+                        if(obsRobot.x < 0)
+                        {
+                            lObsPoses.push_back(obsGround);
+                            ObsPose virtualObsRobot;
+                            virtualObsRobot.x = obsRobot.x + obsRobot.r + 0.2 + 0.9 + 0.2 + 0.3;
+                            virtualObsRobot.y = obsRobot.y;
+                            virtualObsRobot.r = 0.3;
+                            ObsPose virtualObsGround;
+                            virtualObsGround.x = virtualObsRobot.x * TRG(0, 0) + virtualObsRobot.y * TRG(0, 1) + TRG(0, 2);
+                            virtualObsGround.y = virtualObsRobot.x * TRG(1, 0) + virtualObsRobot.y * TRG(1, 1) + TRG(1, 2);
+                            virtualObsGround.r = virtualObsRobot.r;
+                            rObsPoses.push_back(virtualObsGround);
+                        }
+                        else
+                        {
+                            rObsPoses.push_back(obsGround);
+                            ObsPose virtualObsRobot;
+                            virtualObsRobot.x = obsRobot.x - obsRobot.r - 0.2 - 0.9 - 0.2 - 0.3;
+                            virtualObsRobot.y = obsRobot.y;
+                            virtualObsRobot.r = 0.3;
+                            ObsPose virtualObsGround;
+                            virtualObsGround.x = virtualObsRobot.x * TRG(0, 0) + virtualObsRobot.y * TRG(0, 1) + TRG(0, 2);
+                            virtualObsGround.y = virtualObsRobot.x * TRG(1, 0) + virtualObsRobot.y * TRG(1, 1) + TRG(1, 2);
+                            virtualObsGround.r = virtualObsRobot.r;
+                            lObsPoses.push_back(virtualObsGround);
+                        }
+                    }
+                }
+
+                for(int i = 0; i < obsPosesGCS.size(); i++)
+                {
+                    cout<<"Obs "<<i<<" Pos: x:"<<obsPosesGCS[i].x<<" y:"<<obsPosesGCS[i].y<<" radius:"<<obsPosesGCS[i].r<<endl;
+                }
+
+                avoidControlResult.AvoidWalkControl(targetPose, robPoses.back(), obsPosesGCS);
+
+                robPoses.push_back(avoidControlResult.nextRobotPos);
+
+                cout<<"Walk Step Num: "<<avoidControlResult.avoidWalkParam.stepNum<<endl;
+                cout<<"Walk Step Len: "<<avoidControlResult.avoidWalkParam.stepLength<<endl;
+                cout<<"Walk Step Dir: "<<avoidControlResult.avoidWalkParam.walkDirection<<endl;
+                cout<<"Next Robot Pos: x:"<<avoidControlResult.nextRobotPos.x<<" y:"<<avoidControlResult.nextRobotPos.y<<endl;
+
+                visionWalkParam.movetype = avoidmove;
+                visionWalkParam.walkLength = avoidControlResult.avoidWalkParam.stepLength;
+                visionWalkParam.walkDirection = avoidControlResult.avoidWalkParam.walkDirection;
+                visionWalkParam.walkNum = avoidControlResult.avoidWalkParam.stepNum;
+
                 if(visionWalkParam.walkNum == 1)
                 {
-                    visionWalkParam.totalCount = 800;
+                    visionWalkParam.totalCount = 1200;
                 }
                 else
                 {
-                    visionWalkParam.totalCount = 1600*(visionWalkParam.walkNum - 0.5);
+                    visionWalkParam.totalCount = 2400*(visionWalkParam.walkNum - 0.5);
+                }
+
+                if(visionWalkParam.turndata != 0)
+                {
+                    if(visionWalkParam.walkNum == 1)
+                    {
+                        visionWalkParam.totalCount = 800;
+                    }
+                    else
+                    {
+                        visionWalkParam.totalCount = 1600*(visionWalkParam.walkNum - 0.5);
+                    }
                 }
             }
-
             isAvoidAnalysisFinished = true;
 
             cout<<"avoidAnalysisFinished"<<endl;

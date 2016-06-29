@@ -31,6 +31,7 @@ public:
 
     static vector<ObsPose> obsPosesGCS;
 
+    static RobPose targetPose;
     static TerrainAnalysis terrainAnalysisResult;
     static ObstacleDetection obstacleDetectionResult;
     static AvoidControl avoidControlResult;
