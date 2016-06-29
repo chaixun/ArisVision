@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 
 
     // Test Start
-    robPoses.clear();
+/*    robPoses.clear();
 
     RobPose startPose = {0, 0, 0, 0, 0, 0};
     RobPose targetPose = {0.0647048 - 0.12, 6.52 + 0.48, 0, 0, 0, M_PI/12};
@@ -63,7 +63,8 @@ int main(int argc, char *argv[])
         virtualObs2.r = 0.3;
         lObsPoses.push_back(virtualObs2);
     }
-    // Test End
+*/  
+  // Test End
 
     std::string xml_address;
 
@@ -71,12 +72,12 @@ int main(int argc, char *argv[])
     {
         std::cout << "you did not type in robot name, in this case ROBOT-III will start" << std::endl;
         //xml_address = "/usr/Robots/resource/Robot_Type_I/Robot_III/Robot_III.xml";
-        xml_address = "/home/hex/ArisVision/VisionEscapingModify/Robot_III.xml";
+        xml_address = "/home/hex/ArisVision/VisionEscapingCurcle/Robot_III.xml";
     }
     else if (std::string(argv[1]) == "III")
     {
         //xml_address = "/usr/Robots/resource/Robot_Type_I/Robot_III/Robot_III.xml";
-        xml_address = "/home/hex/ArisVision/VisionEscapingModify/Robot_III.xml";
+        xml_address = "/home/hex/ArisVision/VisionEscapingCurcle/Robot_III.xml";
     }
     else if (std::string(argv[1]) == "VIII")
     {

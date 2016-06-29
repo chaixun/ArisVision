@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 
 
     // Test Start
-    robPoses.clear();
+/*    robPoses.clear();
 
     RobPose startPose = {0, 0, 0, 0, 0, 0};
     RobPose targetPose = {0.0647048 - 0.12, 6.52 + 0.48, 0, 0, 0, M_PI/12};
@@ -63,7 +63,8 @@ int main(int argc, char *argv[])
         virtualObs2.r = 0.3;
         lObsPoses.push_back(virtualObs2);
     }
-    // Test End
+*/  
+  // Test End
 
     std::string xml_address;
 
