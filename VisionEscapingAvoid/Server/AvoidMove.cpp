@@ -9,7 +9,7 @@ aris::control::Pipe<int> VisionAvoidWrapper::visionPipe(true);
 std::thread VisionAvoidWrapper::visionThread;
 
 vector<ObsPose> VisionAvoidWrapper::obsPosesGCS;
-RobPose VisionAvoidWrapper::targetPose = {0, 8, 0, 0, 0, 0};
+RobPose VisionAvoidWrapper::targetPose = {0, 11, 0, 0, 0, 0};
 
 TerrainAnalysis VisionAvoidWrapper::terrainAnalysisResult;
 ObstacleDetection VisionAvoidWrapper::obstacleDetectionResult;
@@ -162,11 +162,11 @@ void VisionAvoidWrapper::KinectStart()
 
                 if(visionWalkParam.walkNum == 1)
                 {
-                    visionWalkParam.totalCount = 1200;
+                    visionWalkParam.totalCount = 800;
                 }
                 else
                 {
-                    visionWalkParam.totalCount = 2400*(visionWalkParam.walkNum - 0.5);
+                    visionWalkParam.totalCount = 1600*(visionWalkParam.walkNum - 0.5);
                 }
 
                 if(visionWalkParam.turndata != 0)

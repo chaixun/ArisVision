@@ -51,7 +51,7 @@ void AvoidControl::AvoidWalkControl(RobPose targetPos, RobPose cRobotPos, vector
     double robotWalkVector[14][2];
     double robotwalkStepNum = 2;
 
-    double robotWalkStepLength[14] = {0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.50, 0.45, 0.40, 0.35, 0.30, 0.25, 0};
+    double robotWalkStepLength[14] = {0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.45, 0.40, 0.35, 0.30, 0.25, 0.20, 0};
 
     int directionLabel = 13;
 
