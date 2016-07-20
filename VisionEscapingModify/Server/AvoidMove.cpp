@@ -40,7 +40,7 @@ void VisionAvoidWrapper::KinectStart()
 
             auto visiondata = kinect1.getSensorData();
 
-            // terrainAnalysisResult.TerrainAnalyze(visiondata.get().gridMap, visiondata.get().pointCloud);
+            terrainAnalysisResult.TerrainAnalyze(visiondata.get().gridMap, visiondata.get().pointCloud);
 
             cout<<"Curr Robot Pos: x:"<<robPoses.back().x<<" y:"<<robPoses.back().y<<" gama:"<<robPoses.back().gama<<endl;
 
