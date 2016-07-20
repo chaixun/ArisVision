@@ -1,4 +1,5 @@
 #include "AvoidMove.h"
+#include <fstream>
 
 namespace VisionAvoid
 {
@@ -17,6 +18,11 @@ AvoidControl VisionAvoidWrapper::avoidControlResult;
 atomic_bool VisionAvoidWrapper::isAvoidAnalysisFinished(false);
 atomic_bool VisionAvoidWrapper::isSending(false);
 atomic_bool VisionAvoidWrapper::isStop(false);
+
+std::string fileName1 = "RobPose.txt";
+std::ofstream robPoseFile(fileName1);
+std::string fileName2 = "obsPose.txt";
+std::ofstream obsPoseFile(fileName2);
 
 VisionAvoidWrapper::VisionAvoidWrapper()
 {
@@ -44,6 +50,11 @@ void VisionAvoidWrapper::KinectStart()
 
             cout<<"Curr Robot Pos: x:"<<robPoses.back().x<<" y:"<<robPoses.back().y<<" gama:"<<robPoses.back().gama<<endl;
 
+            if(robPoseFile.is_open())
+            {
+                robPoseFile << robPoses.back().x <<" "<< robPoses.back().y <<" "<< robPoses.back().gama <<std::endl;
+            }
+
             obstacleDetectionResult.ObstacleDetecting(visiondata.get().obstacleMap, robPoses.back());
 
             if(obstacleDetectionResult.obsPoses.size() > 0)
@@ -51,11 +62,23 @@ void VisionAvoidWrapper::KinectStart()
                 if(obsPosesGCS.size() == 0)
                 {
                     obsPosesGCS.push_back(obstacleDetectionResult.obsPoses[0]);
+
+                    if(obsPoseFile.is_open())
+                    {
+                        obsPoseFile << obsPosesGCS.back().x <<" "<< obsPosesGCS.back().y <<" "<< obsPosesGCS.back().r <<std::endl;
+                    }
+
                 }
                 else if(fabs(obsPosesGCS.back().x - obstacleDetectionResult.obsPoses[0].x) > obsPosesGCS.back().r
                         ||fabs(obsPosesGCS.back().y - obstacleDetectionResult.obsPoses[0].y) > obsPosesGCS.back().r)
                 {
                     obsPosesGCS.push_back(obstacleDetectionResult.obsPoses[0]);
+
+                    if(obsPoseFile.is_open())
+                    {
+                        obsPoseFile << obsPosesGCS.back().x <<" "<< obsPosesGCS.back().y <<" "<< obsPosesGCS.back().r <<std::endl;
+                    }
+
                 }
             }
 

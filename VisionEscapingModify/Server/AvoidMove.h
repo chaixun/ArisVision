@@ -47,6 +47,8 @@ private:
     static atomic_bool isStop;
 };
 
+static VisionAvoidWrapper wrapper;
+
 }
 
 #endif // AVOIDMOVE_H
